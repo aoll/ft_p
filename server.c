@@ -130,6 +130,14 @@ int	send_error(int fd, char *error)
 	return (EXIT_SUCCESS);
 }
 
+int	send_success(int fd)
+{
+	if ((send_requet(fd, R_SUCCESS, 0
+		, NULL)) == C_LOST)
+		return (C_LOST);
+	return (EXIT_SUCCESS);;
+}
+
 int	wait_reponse(int fd, unsigned int reponse, size_t size)
 {
 	char		*buf;
@@ -155,57 +163,41 @@ int	wait_reponse(int fd, unsigned int reponse, size_t size)
 	return (EXIT_SUCCESS);
 }
 
+int send_data_by_size(int fd, void *data, size_t size)
+{
+	if (send_requet(
+		fd, R_WAIT_SEND, size, NULL) == C_LOST)
+		return (C_LOST);
+	if (wait_reponse(fd, R_WAIT_RECV, 0) == EXIT_FAILLURE)
+		return (EXIT_FAILLURE);
+
+	if (send_data(fd, data, size) == C_LOST)
+		return (C_LOST);
+
+	if (wait_reponse(fd, R_RECV, size) == EXIT_FAILLURE)
+		return (send_error(fd, TRANSFERT_FAIL));
+	return (send_success(fd));
+}
+
 int	pwd_requet(t_cs *cs, char **requet)
 {
 	size_t		size;
+	char		*data;
+	int			ref;
 
-	size = ft_strlen(cs->pwd);
 	if (ft_array_len((const void **)requet) > 1)
 		return (send_error(cs->fd, TOO_MUCH_ARG));
-
-	if (send_requet(
-		cs->fd, R_WAIT_SEND, size, NULL) == C_LOST)
-		return (C_LOST);
-
-	if (wait_reponse(cs->fd, R_WAIT_RECV, 0) == EXIT_FAILLURE)
-		return (EXIT_FAILLURE);
-
-	if (send_data(cs->fd, cs->pwd, size) == C_LOST)
-		return (C_LOST);
-
-	if (wait_reponse(cs->fd, R_RECV, size) == EXIT_FAILLURE)
-		return (EXIT_FAILLURE);
-
-	if ((send_requet(cs->fd, R_SUCCESS, 0
-		, NULL)) == C_LOST)
-		return (C_LOST);
-	return (EXIT_SUCCESS);
-	// ft_bzero(buf, RECV_SIZE);
-	// ret = recv(cs->fd, buf, RECV_SIZE, 0);
-	// if (ret < (int)SIZE_HEADER)
-	// {
-	// 	free(buf);
-	// 	return (EXIT_FAILLURE);
-	// }
-	// header = (t_header *)buf;
-	// if (header->requet == R_RECV && (size_t)header->size == size)
-	// {
-	// 	free(buf);
-	// 	if ((send_requet(cs->fd, R_SUCCESS, 0
-	// 		, NULL)) == C_LOST)
-	// 		return (C_LOST);
-	// 	return (EXIT_SUCCESS);
-	// }
-	// else
-	// {
-	// 	free(buf);
-	// 	if ((send_requet(cs->fd, R_ERROR, ft_strlen(TRANSFERT_FAIL)
-	// 		, TRANSFERT_FAIL)) == C_LOST)
-	// 		return (C_LOST);
-	// 	return (EXIT_FAILLURE);
-	// }
-	// return (EXIT_SUCCESS);
-
+	if (!ft_strcmp(cs->home, cs->pwd))
+	{
+		size = 1;
+		ref = 0;
+	}
+	else
+	{
+		ref = ft_strlen(cs->home);
+		size = ref - ft_strlen(cs->pwd);
+	}
+	return (send_data_by_size(cs->fd, cs->pwd + ref, size));
 }
 
 int	switch_requet(t_cs *cs, char *requet)
