@@ -122,59 +122,18 @@ int	send_data(int fd, void *src, size_t size)
 	return (EXIT_SUCCESS);
 }
 
-int	send_error(int fd, char *error)
-{
-	if (send_requet(
-		fd, R_ERROR, ft_strlen(error), error) == C_LOST)
-		return (C_LOST);
-	return (EXIT_SUCCESS);
-}
-
-int	send_success(int fd)
-{
-	if ((send_requet(fd, R_SUCCESS, 0
-		, NULL)) == C_LOST)
-		return (C_LOST);
-	return (EXIT_SUCCESS);;
-}
-
-int	wait_reponse(int fd, unsigned int reponse, size_t size)
-{
-	char		*buf;
-	int			ret;
-	t_header	*header;
-
-	if (!(buf = ft_strnew(RECV_SIZE)))
-		return (EXIT_FAILLURE);
-	ft_bzero(buf, RECV_SIZE);
-	ret = recv(fd, buf, RECV_SIZE, 0);
-	if (ret < (int)SIZE_HEADER)
-	{
-		free(buf);
-		return (EXIT_FAILLURE);
-	}
-	header = (t_header *)buf;
-	if (header->requet != reponse || (size_t)header->size != size)
-	{
-		free(buf);
-		return (EXIT_FAILLURE);
-	}
-	free(buf);
-	return (EXIT_SUCCESS);
-}
-
 int send_data_by_size(int fd, void *data, size_t size)
 {
 	if (send_requet(
 		fd, R_WAIT_SEND, size, NULL) == C_LOST)
 		return (C_LOST);
-	if (wait_reponse(fd, R_WAIT_RECV, 0) == EXIT_FAILLURE)
+	if (wait_reponse(fd, R_WAIT_RECV, -1, NO_LOG) < 0)
 		return (EXIT_FAILLURE);
 
 	if (send_data(fd, data, size) == C_LOST)
 		return (C_LOST);
 
-	if (wait_reponse(fd, R_RECV, size) == EXIT_FAILLURE)
+	if (wait_reponse(fd, R_RECV, size, NO_LOG) < 0)
 		return (send_error(fd, TRANSFERT_FAIL));
 	return (send_success(fd));
 }

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/14 08:55:00 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/14 23:44:16 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,5 +76,12 @@ typedef struct	s_header
 }	t_header;
 
 int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data);
+int	wait_reponse(int fd, unsigned int reponse, int size, int is_log);
+int	send_success(int fd);
+int	send_error(int fd, char *error);
+int	print_reponse(void *reponse);
+
+//server
+# define NO_LOG 0
 
 #endif
