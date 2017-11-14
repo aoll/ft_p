@@ -110,11 +110,9 @@ int	read_by_size(int fd, char *reponse, int output)
 			break;
 		read += ret;
 	}
-	printf("read: %d, (int)header->size: %d\n", read, (int)header->size);
-
 	if ((ret = send_requet(fd, R_RECV, read, NULL)) == C_LOST)
 		return (ret);
-	
+
 	ft_bzero(buf, RECV_SIZE);
 	if ((ret = recv(fd, buf, RECV_SIZE, 0)) == C_LOST)
 	{

@@ -101,88 +101,110 @@ int	cd_requet(t_cs *cs, char **requet)
 	return (EXIT_SUCCESS);
 }
 
-// int	
+int	send_data(int fd, void *src, size_t size)
+{
+	int len;
+	void *ptr_end;
+
+	ptr_end = (void *)src + size;
+	len = 0;
+	while (src < ptr_end)
+	{
+		len = RECV_SIZE;
+		if ((ptr_end - src) < RECV_SIZE)
+		{
+			len = ptr_end - src;
+		}
+		if (send(fd, src, len, 0) == C_LOST)
+			return (C_LOST);
+		src = src + len;
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	send_error(int fd, char *error)
+{
+	if (send_requet(
+		fd, R_ERROR, ft_strlen(error), error) == C_LOST)
+		return (C_LOST);
+	return (EXIT_SUCCESS);
+}
+
+int	wait_reponse(int fd, unsigned int reponse, size_t size)
+{
+	char		*buf;
+	int			ret;
+	t_header	*header;
+
+	if (!(buf = ft_strnew(RECV_SIZE)))
+		return (EXIT_FAILLURE);
+	ft_bzero(buf, RECV_SIZE);
+	ret = recv(fd, buf, RECV_SIZE, 0);
+	if (ret < (int)SIZE_HEADER)
+	{
+		free(buf);
+		return (EXIT_FAILLURE);
+	}
+	header = (t_header *)buf;
+	if (header->requet != reponse || (size_t)header->size != size)
+	{
+		free(buf);
+		return (EXIT_FAILLURE);
+	}
+	free(buf);
+	return (EXIT_SUCCESS);
+}
 
 int	pwd_requet(t_cs *cs, char **requet)
 {
-	char		*buf;
-	t_header	*header;
-
-	int			size;
-	int			ret;
-	char		*src;
+	size_t		size;
 
 	size = ft_strlen(cs->pwd);
-	src = cs->pwd;
 	if (ft_array_len((const void **)requet) > 1)
-	{
-		if (send_requet(
-			cs->fd, R_ERROR, ft_strlen(TOO_MUCH_ARG), TOO_MUCH_ARG) == C_LOST)
-			return (C_LOST);
-		return (EXIT_SUCCESS);
-	}
+		return (send_error(cs->fd, TOO_MUCH_ARG));
 
 	if (send_requet(
 		cs->fd, R_WAIT_SEND, size, NULL) == C_LOST)
 		return (C_LOST);
-	if (!(buf = ft_strnew(RECV_SIZE)))
-		return (EXIT_FAILLURE);
-	ft_bzero(buf, RECV_SIZE);
-	ret = recv(cs->fd, buf, RECV_SIZE, 0);
-	if (ret < (int)SIZE_HEADER)
-	{
-		free(buf);
-		return (EXIT_FAILLURE);
-	}
-	header = (t_header *)buf;
-	if (header->requet != R_WAIT_RECV)
-	{
-		free(buf);
-		return (EXIT_FAILLURE);
-	}
 
-	unsigned long ptr_end = (size_t)src + size;
-
-
-	int len = 0;
-	while ((void *)src < (void *)ptr_end)
-	{
-		len = RECV_SIZE;
-		if (((void *)ptr_end - (void *)src) < RECV_SIZE)
-		{
-			len = (void *)ptr_end - (void *)src;
-			printf("len: %d\n", len);
-		}
-		if (send(cs->fd, src, len, 0) == C_LOST)
-			return (C_LOST);
-		src = (void *)src + len;
-	}
-	ft_bzero(buf, RECV_SIZE);
-	printf("Wait for res\n");
-	ret = recv(cs->fd, buf, RECV_SIZE, 0);
-	if (ret < (int)SIZE_HEADER)
-	{
-		free(buf);
+	if (wait_reponse(cs->fd, R_WAIT_RECV, 0) == EXIT_FAILLURE)
 		return (EXIT_FAILLURE);
-	}
-	header = (t_header *)buf;
-	if (header->requet == R_RECV)
-	{
-		free(buf);
-		if ((send_requet(cs->fd, R_SUCCESS, 0
-			, NULL)) == C_LOST)
-			return (C_LOST);
-		return (EXIT_SUCCESS);
-	}
-	else
-	{
-		free(buf);
-		if ((send_requet(cs->fd, R_ERROR, ft_strlen(TRANSFERT_FAIL)
-			, TRANSFERT_FAIL)) == C_LOST)
-			return (C_LOST);
+
+	if (send_data(cs->fd, cs->pwd, size) == C_LOST)
+		return (C_LOST);
+
+	if (wait_reponse(cs->fd, R_RECV, size) == EXIT_FAILLURE)
 		return (EXIT_FAILLURE);
-	}
+
+	if ((send_requet(cs->fd, R_SUCCESS, 0
+		, NULL)) == C_LOST)
+		return (C_LOST);
 	return (EXIT_SUCCESS);
+	// ft_bzero(buf, RECV_SIZE);
+	// ret = recv(cs->fd, buf, RECV_SIZE, 0);
+	// if (ret < (int)SIZE_HEADER)
+	// {
+	// 	free(buf);
+	// 	return (EXIT_FAILLURE);
+	// }
+	// header = (t_header *)buf;
+	// if (header->requet == R_RECV && (size_t)header->size == size)
+	// {
+	// 	free(buf);
+	// 	if ((send_requet(cs->fd, R_SUCCESS, 0
+	// 		, NULL)) == C_LOST)
+	// 		return (C_LOST);
+	// 	return (EXIT_SUCCESS);
+	// }
+	// else
+	// {
+	// 	free(buf);
+	// 	if ((send_requet(cs->fd, R_ERROR, ft_strlen(TRANSFERT_FAIL)
+	// 		, TRANSFERT_FAIL)) == C_LOST)
+	// 		return (C_LOST);
+	// 	return (EXIT_FAILLURE);
+	// }
+	// return (EXIT_SUCCESS);
 
 }
 
