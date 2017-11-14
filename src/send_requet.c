@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 03:01:59 by alex              #+#    #+#             */
-/*   Updated: 2017/11/14 04:49:22 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/14 09:28:10 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data)
 	void		*new;
 	uint32_t	size_segment;
 
+	new = NULL;
 	size_segment = SIZE_HEADER + size;
 	if (!(new = ft_strnew(size_segment)))
 		return (EXIT_FAILLURE);
@@ -31,6 +32,6 @@ int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data)
 		free(new);
 		return (EXIT_FAILLURE);
 	}
-	free(new);
+	// free(new);
 	return (EXIT_SUCCESS);
 }

@@ -101,19 +101,27 @@ int	cd_requet(t_cs *cs, char **requet)
 	return (EXIT_SUCCESS);
 }
 
+// int	
+
 int	pwd_requet(t_cs *cs, char **requet)
 {
 	char		*buf;
 	t_header	*header;
-	
+
 	int			size;
 	int			ret;
+	char		*src;
 
 	size = ft_strlen(cs->pwd);
+	src = cs->pwd;
 	if (ft_array_len((const void **)requet) > 1)
+	{
 		if (send_requet(
 			cs->fd, R_ERROR, ft_strlen(TOO_MUCH_ARG), TOO_MUCH_ARG) == C_LOST)
 			return (C_LOST);
+		return (EXIT_SUCCESS);
+	}
+
 	if (send_requet(
 		cs->fd, R_WAIT_SEND, size, NULL) == C_LOST)
 		return (C_LOST);
@@ -133,19 +141,24 @@ int	pwd_requet(t_cs *cs, char **requet)
 		return (EXIT_FAILLURE);
 	}
 
-	unsigned long ptr_end = (size_t)cs->pwd + size;
+	unsigned long ptr_end = (size_t)src + size;
 
 
 	int len = 0;
-	while ((void *)cs->pwd < (void *)ptr_end)
+	while ((void *)src < (void *)ptr_end)
 	{
 		len = RECV_SIZE;
-		if (((void *)ptr_end - (void *)cs->pwd) < RECV_SIZE)
-			len = (void *)ptr_end - (void *)cs->pwd;
-		if (send(cs->fd, cs->pwd, len, 0) == C_LOST)
+		if (((void *)ptr_end - (void *)src) < RECV_SIZE)
+		{
+			len = (void *)ptr_end - (void *)src;
+			printf("len: %d\n", len);
+		}
+		if (send(cs->fd, src, len, 0) == C_LOST)
 			return (C_LOST);
-		cs->pwd += len;
+		src = (void *)src + len;
 	}
+	ft_bzero(buf, RECV_SIZE);
+	printf("Wait for res\n");
 	ret = recv(cs->fd, buf, RECV_SIZE, 0);
 	if (ret < (int)SIZE_HEADER)
 	{
