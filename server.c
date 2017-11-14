@@ -1,0 +1,329 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+
+#include "ft_p.h"
+
+
+
+typedef struct	s_cs
+{
+	int			fd;
+	char		*home;
+	char		*pwd;
+	char		*oldpwd;
+}	t_cs;
+
+int	fork_process(void)
+{
+	pid_t 	pid;
+	int		ret;
+	int status;
+	char **arg;
+
+	arg = malloc(sizeof(char *)*2);
+	*arg = strdup("ls");
+	*(arg + 1) = NULL;
+	if ((pid = fork()) == -1)
+		return (1);
+	if (!pid)
+	{
+		execv("/bin/ls", arg);
+		exit(2);
+	}
+	else
+	{
+		wait(&status);
+		ret = WEXITSTATUS(status);
+	}
+	return (0);
+}
+
+int	free_cs(t_cs *cs)
+{
+	if (cs->home)
+		free(cs->home);
+	if (cs->pwd)
+		free(cs->pwd);
+	if (cs->oldpwd)
+		free(cs->oldpwd);
+	return (EXIT_FAILLURE);
+}
+
+int	init_cs(t_cs *cs, int fd)
+{
+	if (!(cs->pwd = ft_strnew(PWD_MAX_LEN)))
+		return (EXIT_FAILLURE);
+	if (!(cs->pwd = getcwd(cs->pwd, PWD_MAX_LEN)))
+		return (EXIT_FAILLURE);
+	cs->fd = fd;
+	cs->home = NULL;
+	cs->oldpwd = NULL;
+	if (!(cs->home = ft_strdup(cs->pwd)))
+		return (free_cs(cs));
+	if (!(cs->oldpwd = ft_strdup(cs->pwd)))
+		return (free_cs(cs));
+	return (EXIT_SUCCESS);
+}
+
+int	quit_requet(t_cs *cs)
+{
+	send_requet(
+		cs->fd, R_QUIT, 0, NULL);
+	return (QUIT);
+}
+
+int	cd_requet(t_cs *cs, char **requet)
+{
+	// int		ret;
+	// int		len;
+	//
+	// if ((len = ft_array_len(requet)) < 2)
+	// 	return (execute_cd(cs, "/"))
+	// else if (len > 2)
+	// 	return (send_requet(cs->fd, R_ERROR, ft_strlen(), NULL));
+	// if (!ft_strcmp(requet[1], "-")
+	// 	return (execute_cd(cs, cs->oldpwd));
+	//
+	// verivie target ne descend pas en dessous du dossier dexecution du server
+	// verif_dest(cs, split[1] , 0)
+	// 	free target
+	// 	return error
+	// execute_cd()
+	// free target
+
+	send_requet(
+		cs->fd, R_SUCCESS, 0, NULL);
+	return (EXIT_SUCCESS);
+}
+
+int	pwd_requet(t_cs *cs, char **requet)
+{
+	char		*buf;
+	t_header	*header;
+	
+	int			size;
+	int			ret;
+
+	size = ft_strlen(cs->pwd);
+	if (ft_array_len((const void **)requet) > 1)
+		if (send_requet(
+			cs->fd, R_ERROR, ft_strlen(TOO_MUCH_ARG), TOO_MUCH_ARG) == C_LOST)
+			return (C_LOST);
+	if (send_requet(
+		cs->fd, R_WAIT_SEND, size, NULL) == C_LOST)
+		return (C_LOST);
+	if (!(buf = ft_strnew(RECV_SIZE)))
+		return (EXIT_FAILLURE);
+	ft_bzero(buf, RECV_SIZE);
+	ret = recv(cs->fd, buf, RECV_SIZE, 0);
+	if (ret < (int)SIZE_HEADER)
+	{
+		free(buf);
+		return (EXIT_FAILLURE);
+	}
+	header = (t_header *)buf;
+	if (header->requet != R_WAIT_RECV)
+	{
+		free(buf);
+		return (EXIT_FAILLURE);
+	}
+
+	unsigned long ptr_end = (size_t)cs->pwd + size;
+
+
+	int len = 0;
+	while ((void *)cs->pwd < (void *)ptr_end)
+	{
+		len = RECV_SIZE;
+		if (((void *)ptr_end - (void *)cs->pwd) < RECV_SIZE)
+			len = (void *)ptr_end - (void *)cs->pwd;
+		if (send(cs->fd, cs->pwd, len, 0) == C_LOST)
+			return (C_LOST);
+		cs->pwd += len;
+	}
+	ret = recv(cs->fd, buf, RECV_SIZE, 0);
+	if (ret < (int)SIZE_HEADER)
+	{
+		free(buf);
+		return (EXIT_FAILLURE);
+	}
+	header = (t_header *)buf;
+	if (header->requet == R_RECV)
+	{
+		free(buf);
+		if ((send_requet(cs->fd, R_SUCCESS, 0
+			, NULL)) == C_LOST)
+			return (C_LOST);
+		return (EXIT_SUCCESS);
+	}
+	else
+	{
+		free(buf);
+		if ((send_requet(cs->fd, R_ERROR, ft_strlen(TRANSFERT_FAIL)
+			, TRANSFERT_FAIL)) == C_LOST)
+			return (C_LOST);
+		return (EXIT_FAILLURE);
+	}
+	return (EXIT_SUCCESS);
+
+}
+
+int	switch_requet(t_cs *cs, char *requet)
+{
+	int			ret;
+	char		**split;
+
+	ret = MAGIC_NUMER;
+	if (!(split = ft_strsplit(requet, ' ')))
+	{
+		if ((ret = send_requet(
+			cs->fd, R_ERROR, ft_strlen(INTERN_ERROR), INTERN_ERROR)))
+			return (ret);
+		return (EXIT_FAILLURE);
+	}
+	if (!ft_strncmp(requet, REQUET_QUIT, ft_strlen(REQUET_QUIT)))
+		ret = quit_requet(cs);
+	else if (!ft_strncmp(requet, REQUET_CD, ft_strlen(REQUET_CD)))
+		ret =  cd_requet(cs, split);
+	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_CD)))
+		ret =  pwd_requet(cs, split);
+	ft_array_free(&split);
+	if (ret == MAGIC_NUMER)
+	{
+		if ((ret = send_requet(
+			cs->fd, R_ERROR, ft_strlen(UNKNOW_CMD), UNKNOW_CMD)))
+			return (ret);
+		return (EXIT_SUCCESS);
+	}
+	return (ret);
+}
+
+int	read_requet(t_cs *cs, void *buf, int read)
+{
+	t_header *header;
+
+	header = (t_header *)buf;
+	if (header->requet != R_CMD
+		|| !header->size || (header->size + sizeof(header)) != read)
+	{
+		if (send_requet(cs->fd, R_ERROR,
+			ft_strlen(NEED_COMMAND_VALID), NEED_COMMAND_VALID) == C_LOST)
+			return (C_LOST);
+		return (EXIT_SUCCESS);
+	}
+	printf("code: %d, size: %d, data: %s\n", header->requet, header->size, (void *)header + sizeof(header));
+	return (switch_requet(cs, (void *)header + sizeof(header)));
+}
+
+int	read_socket(int fd)
+{
+	t_cs	cs;
+	char	*buf;
+	int	read;
+	int		ret;
+
+	if (init_cs(&cs, fd))
+		return (EXIT_FAILLURE);
+	if (!(buf = ft_strnew(RECV_SIZE)))
+		return (EXIT_FAILLURE);
+	ft_bzero(buf, RECV_SIZE);
+	ret = 0;
+	while ((read = recv(fd, buf, RECV_SIZE, 0)) > 0)
+	{
+		if (read >= (int)SIZE_HEADER)
+		{
+			if ((ret = read_requet(&cs, buf, read)))
+				if (ret == QUIT || ret == C_LOST)
+					break ;
+		}
+		ft_bzero(buf, RECV_SIZE);
+	}
+	free(buf);
+	free_cs(&cs);
+	return (ret);
+}
+
+int	new_process(int fd)
+{
+	pid_t	pid;
+	int		ret;
+
+	printf("%s\n", "new process");
+	if ((pid = fork()) == -1)
+		return (EXIT_FAILLURE);
+	if (!pid)
+	{
+		ret = read_socket(fd);
+		close(fd);
+	}
+	return (EXIT_SUCCESS);
+}
+
+/*
+** usage
+*/
+
+void	usage(char *s)
+{
+	printf("Usage: %s <port>\n", s);
+	exit(EXIT_FAILLURE);
+}
+
+int	create_server(int port)
+{
+	int					sock;
+	struct protoent		*proto;
+	struct sockaddr_in	sin;
+
+	if (!(proto = getprotobyname(PROTOCOLE)))
+		return (-1);
+	sock = socket(PF_INET, SOCK_STREAM, proto->p_proto);
+	sin.sin_family = AF_INET;
+	sin.sin_port = htons(port);
+	sin.sin_addr.s_addr = htonl(INADDR_ANY);
+	bind(sock, (const struct sockaddr *)&sin, sizeof(sin));
+	listen(sock, NB_CONN_SOCKET);
+	return (sock);
+}
+
+/*
+** TCP/IP (v4) server example from 42 school
+*/
+
+int	main(int ac, char **av)
+{
+	int					port;
+	int					sock;
+	int					cs;
+	unsigned int		cslen;
+	struct sockaddr_in	csin;
+	int					nb_con;
+
+	if (ac != 2)
+		usage(av[0]);
+	if ((port = atoi(av[1])) <= 0)
+		usage(av[0]);
+	if ((sock = create_server(port)) < 0)
+	 	return (EXIT_FAILLURE);
+		printf("%s\n", "yo");
+	while (42)
+	{
+		if ((cs = accept(sock, (struct sockaddr *)&csin, &cslen)) == -1)
+		{
+			ft_putstr_fd(MESS_LIMIT_NB_CON_REACHED, STDERR);
+			continue ;
+		}
+		new_process(cs);
+	}
+
+
+
+	close(cs);
+	close(sock);
+	return (EXIT_SUCCESS);
+}
