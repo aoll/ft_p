@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 03:01:59 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 01:52:44 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 16:09:25 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ int	print_reponse(void *reponse)
 		ft_putstr(SUCCESS);
 	else
 		ft_putstr(ERROR);
-	if (header->size)
+	if (header->size > 0)
 	{
-		ft_putstr(reponse + sizeof(header));
+		write(1, reponse + sizeof(header), header->size);
 	}
 	return (header->requet == R_SUCCESS ? EXIT_SUCCESS : EXIT_FAILLURE);
 }
@@ -34,7 +34,12 @@ int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data)
 	uint32_t	size_segment;
 
 	new = NULL;
-	size_segment = SIZE_HEADER + size;
+
+	size_segment = SIZE_HEADER;
+	if (data)
+	{
+		size_segment += size;
+	}
 	if (!(new = ft_strnew(size_segment)))
 		return (EXIT_FAILLURE);
 	ft_memcpy(new, &requet, sizeof(uint32_t));

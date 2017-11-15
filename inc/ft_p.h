@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/15 02:04:51 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 13:23:14 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@
 # define RECV_SIZE					256
 
 # define TOO_MUCH_ARG				"Too much argument for the command\n"
+# define INVALID_NB_ARG				"Command need one and only one argument\n"
 # define UNKNOW_CMD					"Command not implemented\n"
 
 # define TRANSFERT_FAIL				"Transfert fail\n"
@@ -63,12 +64,14 @@
 # define R_WAIT_RECV		201
 # define R_WAIT_SEND		202
 # define R_RECV				203
+# define R_GET_OK			204
 # define R_ERROR			500
 # define R_QUIT				420
 
 # define REQUET_QUIT				"quit"
 # define REQUET_CD					"cd"
 # define REQUET_PWD					"pwd"
+# define REQUET_GET					"get"
 
 typedef struct	s_header
 {
@@ -81,7 +84,7 @@ int	wait_reponse(int fd, unsigned int reponse, int size, int is_log);
 int	send_success(int fd);
 int	send_error(int fd, char *error);
 int	print_reponse(void *reponse);
-
+int	map_file(const char *file_name, char **buf);
 //server
 # define NO_LOG 0
 

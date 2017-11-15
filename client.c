@@ -122,6 +122,53 @@ int	requet_client(int fd, char *requet, int output)
 	return (recv_by_size(fd, output));
 }
 
+
+
+int	create_file(char *requet)
+{
+	char	**split;
+	int		fd;
+
+	if (!(split = ft_strsplit(requet, ' ')))
+		return (-1);
+	if (!split[1])
+	{
+		ft_array_free(&split);
+		return (-1);
+	}
+	if ((fd = open(split[1], O_CREAT | O_RDWR | O_TRUNC,
+	   S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) < 0)
+	{
+		ft_array_free(&split);
+		return (-1);
+	}
+	ft_array_free(&split);
+	return (fd);
+}
+
+int	requet_get(int fd, char *requet)
+{
+	int	ret;
+	int dest_fd;
+
+	if (send_requet(fd, R_CMD, ft_strlen(requet),
+		(const void *)requet) == C_LOST)
+		return (C_LOST);
+	if ((ret = wait_reponse(fd, R_GET_OK, -1, IS_LOG)) < 0)
+	{
+		if (ret == C_LOST)
+			return (C_LOST);
+		return (EXIT_FAILLURE);
+	}
+	if ((dest_fd = create_file(requet)) < 0)
+		return (send_error(fd, NO_ACCESS));
+	if ((send_requet(fd, R_GET_OK, 0, NULL)) == C_LOST)
+		return (C_LOST);
+	ret = recv_by_size(fd, dest_fd);
+	close(dest_fd);
+	return (ret);
+}
+
 int	switch_requet_client(int fd, char *requet)
 {
 	if (!ft_strncmp(requet, REQUET_QUIT, ft_strlen(REQUET_QUIT)))
@@ -130,7 +177,22 @@ int	switch_requet_client(int fd, char *requet)
 		return (cd_requet_client(fd, requet));
 	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_PWD)))
 		return (requet_client(fd, requet, STDOUT));
+	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
+		return (requet_get(fd, requet));
 	return (EXIT_SUCCESS);
+}
+
+int	test(char *s)
+{
+	char	*buf;
+	int		size;
+
+	if ((size = map_file(s, &buf)) < 0)
+		return (EXIT_FAILLURE); //no access
+	write(1, buf, size);
+	if (munmap(buf, size) < 0)
+		return (-1);
+	return (1);
 }
 
 /*

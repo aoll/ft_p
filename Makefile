@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/11/14 05:09:16 by alex             ###   ########.fr        #
+#    Updated: 2017/11/15 05:36:02 by alex             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,7 @@ O_DIR= obj
 
 MKDIR = mkdir
 
-C_SRC = send_requet.c
+C_SRC = send_requet.c map_file.c
 
 VPATH= .:src
 

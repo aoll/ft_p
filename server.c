@@ -165,11 +165,14 @@ int	cd_requet(t_cs *cs, char **requet)
 
 int	send_data(int fd, void *src, size_t size)
 {
-	int len;
-	void *ptr_end;
+	int		len;
+	void	*ptr_end;
+	int		ret;
+	int		total;
 
 	ptr_end = (void *)src + size;
 	len = 0;
+	total = 0;
 	while (src < ptr_end)
 	{
 		len = RECV_SIZE;
@@ -177,15 +180,19 @@ int	send_data(int fd, void *src, size_t size)
 		{
 			len = ptr_end - src;
 		}
-		if (send(fd, src, len, 0) == C_LOST)
+		if ((ret = send(fd, (const void*)src, len, 0) == C_LOST))
+		{
 			return (C_LOST);
-		src = src + len;
+		}
+		src = (void *)src + len;
+		total += len;
 	}
 	return (EXIT_SUCCESS);
 }
 
 int send_data_by_size(int fd, void *data, size_t size)
 {
+
 	if (send_requet(
 		fd, R_WAIT_SEND, size, NULL) == C_LOST)
 		return (C_LOST);
@@ -221,6 +228,41 @@ int	pwd_requet(t_cs *cs, char **requet)
 	return (send_data_by_size(cs->fd, (cs->pwd + ref), size));
 }
 
+int	init_wait_get(fd)
+{
+	if (send_requet(
+		fd, R_GET_OK, 0, NULL) == C_LOST)
+	{
+		return (C_LOST);
+	}
+	if (wait_reponse(fd, R_GET_OK, -1, NO_LOG) < 0)
+	{
+		return (EXIT_FAILLURE);
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	get_requet(t_cs *cs, char **requet)
+{
+	int			size;
+	char		*buf;
+	int 		ret;
+
+	if (ft_array_len((const void **)requet) != 2)
+		return (send_error(cs->fd, INVALID_NB_ARG));
+	if ((size = map_file(requet[1], &buf)) < 0)
+		return (send_error(cs->fd, NO_ACCESS));
+	if ((ret = init_wait_get(cs->fd)) != EXIT_SUCCESS)
+	{
+		munmap(buf, size);
+		return (send_error(cs->fd, NO_ACCESS));
+	}
+	ret = send_data_by_size(cs->fd, buf, size);
+	if (munmap(buf, size) < 0)
+		return (EXIT_FAILLURE);
+	return (ret);
+}
+
 int	switch_requet(t_cs *cs, char *requet)
 {
 	int			ret;
@@ -240,6 +282,8 @@ int	switch_requet(t_cs *cs, char *requet)
 		ret =  cd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_CD)))
 		ret =  pwd_requet(cs, split);
+	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_CD)))
+		ret =  get_requet(cs, split);
 	ft_array_free(&split);
 	if (ret == MAGIC_NUMER)
 	{
@@ -368,9 +412,6 @@ int	main(int ac, char **av)
 		}
 		new_process(cs);
 	}
-
-
-
 	close(cs);
 	close(sock);
 	return (EXIT_SUCCESS);
