@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/15 13:23:14 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 18:38:45 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@
 # define R_WAIT_SEND		202
 # define R_RECV				203
 # define R_GET_OK			204
+# define R_PUT_OK			205
 # define R_ERROR			500
 # define R_QUIT				420
 
@@ -72,6 +73,7 @@
 # define REQUET_CD					"cd"
 # define REQUET_PWD					"pwd"
 # define REQUET_GET					"get"
+# define REQUET_PUT					"put"
 
 typedef struct	s_header
 {
@@ -85,6 +87,10 @@ int	send_success(int fd);
 int	send_error(int fd, char *error);
 int	print_reponse(void *reponse);
 int	map_file(const char *file_name, char **buf);
+int	get_reponse(int fd, char *requet);
+int	recv_by_size(int fd, int output);
+int	get_requet(int fd, char **requet);
+int send_data_by_size(int fd, void *data, size_t size);
 //server
 # define NO_LOG 0
 

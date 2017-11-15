@@ -60,60 +60,6 @@ int cd_requet_client(int fd, char *requet)
 	return (ret <= 0 ? C_LOST : EXIT_SUCCESS);
 }
 
-int	read_by_size(int fd, int output, size_t size)
-{
-	char	*buf;
-	int		ret;
-	size_t	read;
-
-	read = 0;
-	if (!(buf = ft_strnew(RECV_SIZE)))
-		return (-1);
-	while (read < size)
-	{
-		ft_bzero(buf, RECV_SIZE);
-		if ((ret = recv(fd, buf, RECV_SIZE, 0)) == C_LOST)
-		{
-			free(buf);
-			return (C_LOST);
-		}
-		write(output, buf, ret);
-		if (!ret)
-			break;
-		read += ret;
-	}
-	free(buf);
-	if (output == STDOUT)
-		write(STDOUT, "\n", 1);
-	return (read);
-}
-
-int	recv_by_size(int fd, int output)
-{
-	int			size;
-	int			read;
-
-	if ((size = wait_reponse(fd, R_WAIT_SEND, -1, IS_LOG)) < 0)
-	{
-		if (size == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
-	if ((send_requet(fd, R_WAIT_RECV, 0, NULL)) == C_LOST)
-		return (C_LOST);
-	if ((read = read_by_size(fd, output, size)) == C_LOST)
-		return (C_LOST);
-	if ((send_requet(fd, R_RECV, read, NULL)) == C_LOST)
-		return (C_LOST);
-	if ((size = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
-	{
-		if (size == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
-	return (EXIT_SUCCESS);
-}
-
 int	requet_client(int fd, char *requet, int output)
 {
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
@@ -123,51 +69,39 @@ int	requet_client(int fd, char *requet, int output)
 }
 
 
-
-int	create_file(char *requet)
-{
-	char	**split;
-	int		fd;
-
-	if (!(split = ft_strsplit(requet, ' ')))
-		return (-1);
-	if (!split[1])
-	{
-		ft_array_free(&split);
-		return (-1);
-	}
-	if ((fd = open(split[1], O_CREAT | O_RDWR | O_TRUNC,
-	   S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) < 0)
-	{
-		ft_array_free(&split);
-		return (-1);
-	}
-	ft_array_free(&split);
-	return (fd);
-}
-
 int	requet_get(int fd, char *requet)
 {
-	int	ret;
-	int dest_fd;
-
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 		(const void *)requet) == C_LOST)
 		return (C_LOST);
-	if ((ret = wait_reponse(fd, R_GET_OK, -1, IS_LOG)) < 0)
+	return (get_reponse(fd, requet));
+}
+
+int	requet_put(int fd, char *requet)
+{
+	int		ret;
+	char	**split;
+
+	if (!(split = ft_strsplit(requet, ' ')))
+		return (EXIT_FAILLURE);
+	if (send_requet(fd, R_CMD, ft_strlen(requet),
+		(const void *)requet) == C_LOST)
+		return (C_LOST);
+	if ((ret = wait_reponse(fd, R_PUT_OK, -1, IS_LOG)) < 0)
 	{
 		if (ret == C_LOST)
 			return (C_LOST);
 		return (EXIT_FAILLURE);
 	}
-	if ((dest_fd = create_file(requet)) < 0)
-		return (send_error(fd, NO_ACCESS));
-	if ((send_requet(fd, R_GET_OK, 0, NULL)) == C_LOST)
-		return (C_LOST);
-	ret = recv_by_size(fd, dest_fd);
-	close(dest_fd);
-	return (ret);
+	ret = get_requet(fd, split);
+	ft_array_free(&split);
+	return (0);
 }
+
+
+
+
+
 
 int	switch_requet_client(int fd, char *requet)
 {
@@ -179,20 +113,9 @@ int	switch_requet_client(int fd, char *requet)
 		return (requet_client(fd, requet, STDOUT));
 	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
 		return (requet_get(fd, requet));
+	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_GET)))
+		return (requet_put(fd, requet));
 	return (EXIT_SUCCESS);
-}
-
-int	test(char *s)
-{
-	char	*buf;
-	int		size;
-
-	if ((size = map_file(s, &buf)) < 0)
-		return (EXIT_FAILLURE); //no access
-	write(1, buf, size);
-	if (munmap(buf, size) < 0)
-		return (-1);
-	return (1);
 }
 
 /*
