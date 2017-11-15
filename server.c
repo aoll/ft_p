@@ -77,28 +77,90 @@ int	quit_requet(t_cs *cs)
 	return (QUIT);
 }
 
-int	cd_requet(t_cs *cs, char **requet)
+int	execute_cd(t_cs *cs, char *pwd)
 {
-	// int		ret;
-	// int		len;
-	//
-	// if ((len = ft_array_len(requet)) < 2)
-	// 	return (execute_cd(cs, "/"))
-	// else if (len > 2)
-	// 	return (send_requet(cs->fd, R_ERROR, ft_strlen(), NULL));
-	// if (!ft_strcmp(requet[1], "-")
-	// 	return (execute_cd(cs, cs->oldpwd));
-	//
-	// verivie target ne descend pas en dessous du dossier dexecution du server
-	// verif_dest(cs, split[1] , 0)
-	// 	free target
-	// 	return error
-	// execute_cd()
-	// free target
+	char *buf;
 
+	printf("pwd: %s\n", pwd);
+	if (chdir(pwd))
+		return (send_error(cs->fd, NO_ACCESS));
+	if (!(buf = getcwd(NULL, RECV_SIZE)))
+		return (send_error(cs->fd, INTERN_ERROR));
+	free(cs->oldpwd);
+	cs->oldpwd = cs->pwd;
+	cs->pwd = buf;
 	send_requet(
 		cs->fd, R_SUCCESS, 0, NULL);
 	return (EXIT_SUCCESS);
+}
+
+int	verify_dest(t_cs *cs, char *dest)
+{
+	char	**split;
+	int		i;
+	int		dir;
+
+	if (!(split = ft_strsplit(dest, '/')))
+		return (EXIT_FAILLURE);
+	i = 0;
+	dir = ft_nb_c(cs->pwd + ft_strlen(cs->home), '/');
+	while (split[i])
+	{
+		if (dir < 0)
+			break ;
+		if (!ft_strcmp("..", split[i]))
+			dir--;
+		else
+			dir++;
+		i++;
+	}
+	ft_array_free(&split);
+	if (dir < 0)
+		return (EXIT_FAILLURE);
+	return (EXIT_SUCCESS);
+}
+
+char	*new_pwd_target(t_cs *cs, char **requet)
+{
+	char	*target;
+
+	if (*requet[1] != '/')
+	{
+		if (!(target = ft_strjoin(cs->pwd, "/")))
+			return (NULL);
+		if (!(target = ft_strjoin_free(&target, requet[1])))
+			return (NULL);
+	}
+	else
+	{
+		if (!(target = ft_strjoin(cs->home, requet[1])))
+			return (NULL);
+	}
+	return (target);
+}
+
+int	cd_requet(t_cs *cs, char **requet)
+{
+	int		ret;
+	int		len;
+	char	*target;
+
+	if ((len = ft_array_len((const void **)requet)) < 2)
+		return (execute_cd(cs, cs->home));
+	else if (len > 2)
+		return (send_error(cs->fd, TOO_MUCH_ARG));
+	if (!ft_strcmp(requet[1], "-"))
+		return (execute_cd(cs, cs->oldpwd));
+	if (!(target = new_pwd_target(cs, requet)))
+		return (send_error(cs->fd, INTERN_ERROR));
+	if (verify_dest(cs, requet[1]) == EXIT_FAILLURE)
+	{
+		free(target);
+		return (send_error(cs->fd, NO_ACCESS));
+	}
+	ret = execute_cd(cs, target);
+	free(target);
+	return (ret);
 }
 
 int	send_data(int fd, void *src, size_t size)
@@ -154,9 +216,9 @@ int	pwd_requet(t_cs *cs, char **requet)
 	else
 	{
 		ref = ft_strlen(cs->home);
-		size = ref - ft_strlen(cs->pwd);
+		size = ft_strlen(cs->pwd) - ref;
 	}
-	return (send_data_by_size(cs->fd, cs->pwd + ref, size));
+	return (send_data_by_size(cs->fd, (cs->pwd + ref), size));
 }
 
 int	switch_requet(t_cs *cs, char *requet)

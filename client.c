@@ -94,25 +94,31 @@ int	recv_by_size(int fd, int output)
 	int			read;
 
 	if ((size = wait_reponse(fd, R_WAIT_SEND, -1, IS_LOG)) < 0)
+	{
+		if (size == C_LOST)
+			return (C_LOST);
 		return (EXIT_FAILLURE);
+	}
 	if ((send_requet(fd, R_WAIT_RECV, 0, NULL)) == C_LOST)
 		return (C_LOST);
 	if ((read = read_by_size(fd, output, size)) == C_LOST)
 		return (C_LOST);
 	if ((send_requet(fd, R_RECV, read, NULL)) == C_LOST)
 		return (C_LOST);
-	if (wait_reponse(fd, R_SUCCESS, -1, IS_LOG) < 0)
+	if ((size = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
+	{
+		if (size == C_LOST)
+			return (C_LOST);
 		return (EXIT_FAILLURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
 int	requet_client(int fd, char *requet, int output)
 {
-	int			ret;
-
-	if ((ret = send_requet(fd, R_CMD, ft_strlen(requet),
-	(const void *)requet)))
-		return (ret);
+	if (send_requet(fd, R_CMD, ft_strlen(requet),
+	(const void *)requet))
+		return (C_LOST);
 	return (recv_by_size(fd, output));
 }
 

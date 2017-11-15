@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/14 23:44:16 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 02:04:51 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@
 # define TRANSFERT_FAIL				"Transfert fail\n"
 # define CONNECTION_LOST			"Connection lost\n"
 # define INTERN_ERROR				"Intern error\n"
+# define NO_ACCESS					"No access\n"
 # define SUCCESS					"SUCCESS\n"
 # define ERROR						"ERROR\n"
 # define QUIT						2

@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 03:01:59 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 00:23:53 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 01:52:44 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data)
 	if (send(fd, new, size_segment, 0) == C_LOST)
 	{
 		free(new);
-		return (EXIT_FAILLURE);
+		return (C_LOST);
 	}
 	free(new);
 	return (EXIT_SUCCESS);
@@ -75,14 +75,14 @@ int	wait_reponse(int fd, unsigned int reponse, int size, int is_log)
 	t_header	*header;
 
 	if (!(buf = ft_strnew(RECV_SIZE)))
-		return (-1);
+		return (-2);
 	ft_bzero(buf, RECV_SIZE);
 	if ((ret = recv(fd, buf, RECV_SIZE, 0)) == C_LOST)
-		return (-1);
+		return (C_LOST);
 	if (ret < (int)SIZE_HEADER)
 	{
 		free(buf);
-		return (-1);
+		return (C_LOST);
 	}
 	header = (t_header *)buf;
 	if (header->requet != reponse || ((int)header->size != size && size != -1))
@@ -90,7 +90,7 @@ int	wait_reponse(int fd, unsigned int reponse, int size, int is_log)
 		if (is_log)
 			print_reponse(buf);
 		free(buf);
-		return (-1);
+		return (-2);
 	}
 	if (is_log && reponse == R_SUCCESS)
 		print_reponse(buf);
