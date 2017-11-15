@@ -87,8 +87,6 @@ int check_file(char **split)
 		printf("ERROR\n%s", INVALID_NB_ARG);
 		return (EXIT_FAILLURE);
 	}
-	printf("%s\n", *(split + 1));
-
 	if ((fd = open(*(split + 1), O_RDONLY)) < 0)
 	{
 		printf("ERROR\n%s", NO_ACCESS);

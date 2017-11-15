@@ -10,13 +10,7 @@
 
 
 
-typedef struct	s_cs
-{
-	int			fd;
-	char		*home;
-	char		*pwd;
-	char		*oldpwd;
-}	t_cs;
+
 
 int	fork_process(void)
 {
@@ -94,31 +88,7 @@ int	execute_cd(t_cs *cs, char *pwd)
 	return (EXIT_SUCCESS);
 }
 
-int	verify_dest(t_cs *cs, char *dest)
-{
-	char	**split;
-	int		i;
-	int		dir;
 
-	if (!(split = ft_strsplit(dest, '/')))
-		return (EXIT_FAILLURE);
-	i = 0;
-	dir = ft_nb_c(cs->pwd + ft_strlen(cs->home), '/');
-	while (split[i])
-	{
-		if (dir < 0)
-			break ;
-		if (!ft_strcmp("..", split[i]))
-			dir--;
-		else
-			dir++;
-		i++;
-	}
-	ft_array_free(&split);
-	if (dir < 0)
-		return (EXIT_FAILLURE);
-	return (EXIT_SUCCESS);
-}
 
 char	*new_pwd_target(t_cs *cs, char **requet)
 {
@@ -207,10 +177,19 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 
 int	ls_requet(t_cs *cs, char **requet)
 {
-	
+
 	return (send_success(cs->fd));
 }
 
+
+int	get_requet_server(t_cs *cs, char **requet)
+{
+	if (ft_array_len((const void **)requet) != 2)
+		return (send_error(cs->fd, INVALID_NB_ARG));
+	if (verify_dest(cs, requet[1]) == EXIT_FAILLURE)
+		return (send_error(cs->fd, NO_ACCESS));
+	return (get_requet(cs->fd, requet, NO_LOG));
+}
 
 int	switch_requet(t_cs *cs, char *requet)
 {
@@ -234,7 +213,7 @@ int	switch_requet(t_cs *cs, char *requet)
 	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
 		ret =  ls_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
-		ret =  get_requet(cs->fd, split, NO_LOG);
+		ret =  get_requet_server(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_PUT)))
 		ret =  put_requet(cs, split, requet);
 

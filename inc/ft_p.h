@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/15 22:59:39 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/16 00:08:12 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,14 @@ typedef struct	s_header
 	uint32_t	size;
 }	t_header;
 
+typedef struct	s_cs
+{
+	int			fd;
+	char		*home;
+	char		*pwd;
+	char		*oldpwd;
+}	t_cs;
+
 int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data);
 int	wait_reponse(int fd, unsigned int reponse, int size, int is_log);
 int	send_success(int fd);
@@ -92,6 +100,7 @@ int	get_reponse(int fd, char *requet);
 int	recv_by_size(int fd, int output);
 int	get_requet(int fd, char **requet, int is_log);
 int send_data_by_size(int fd, void *data, size_t size);
+int	verify_dest(t_cs *cs, char *dest);
 //server
 # define NO_LOG 0
 
