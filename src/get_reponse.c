@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 17:56:44 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 18:21:53 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 23:45:30 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,9 @@ int	recv_by_size(int fd, int output)
 static int	create_file(char *requet)
 {
 	char	**split;
+	char	**dest;
 	int		fd;
+	int		len;
 
 	if (!(split = ft_strsplit(requet, ' ')))
 		return (-1);
@@ -78,14 +80,14 @@ static int	create_file(char *requet)
 		ft_array_free(&split);
 		return (-1);
 	}
-	if ((fd = open(split[1], O_CREAT | O_RDWR | O_TRUNC,
-	   S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH)) < 0)
-	{
-		ft_array_free(&split);
+	if (!(dest = ft_strsplit(*(split + 1), '/')))
 		return (-1);
-	}
+	len = ft_array_len((const void **)dest);
+	fd = open(dest[len - 1], O_CREAT | O_RDWR | O_TRUNC,
+		S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 	ft_array_free(&split);
-	return (fd);
+	ft_array_free(&dest);
+	return (fd < 0 ? -1 : fd);
 }
 
 int			get_reponse(int fd, char *requet)
@@ -100,7 +102,9 @@ int			get_reponse(int fd, char *requet)
 		return (EXIT_FAILLURE);
 	}
 	if ((dest_fd = create_file(requet)) < 0)
+	{
 		return (send_error(fd, NO_ACCESS));
+	}
 	if ((send_requet(fd, R_GET_OK, 0, NULL)) == C_LOST)
 		return (C_LOST);
 	ret = recv_by_size(fd, dest_fd);

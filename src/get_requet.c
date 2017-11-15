@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 18:29:29 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 18:39:49 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 18:55:48 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,21 +56,21 @@ int 		send_data_by_size(int fd, void *data, size_t size)
 	return (send_success(fd));
 }
 
-static int	init_wait_get(fd)
+static int	init_wait_get(fd, is_log)
 {
 	if (send_requet(
 		fd, R_GET_OK, 0, NULL) == C_LOST)
 	{
 		return (C_LOST);
 	}
-	if (wait_reponse(fd, R_GET_OK, -1, NO_LOG) < 0)
+	if (wait_reponse(fd, R_GET_OK, -1, is_log) < 0)
 	{
 		return (EXIT_FAILLURE);
 	}
 	return (EXIT_SUCCESS);
 }
 
-int			get_requet(int fd, char **requet)
+int			get_requet(int fd, char **requet, int is_log)
 {
 	int			size;
 	char		*buf;
@@ -80,7 +80,7 @@ int			get_requet(int fd, char **requet)
 		return (send_error(fd, INVALID_NB_ARG));
 	if ((size = map_file(requet[1], &buf)) < 0)
 		return (send_error(fd, NO_ACCESS));
-	if ((ret = init_wait_get(fd)) != EXIT_SUCCESS)
+	if ((ret = init_wait_get(fd, is_log)) != EXIT_SUCCESS)
 	{
 		munmap(buf, size);
 		return (send_error(fd, NO_ACCESS));

@@ -77,12 +77,36 @@ int	requet_get(int fd, char *requet)
 	return (get_reponse(fd, requet));
 }
 
+int check_file(char **split)
+{
+	int			fd;
+	char		*ptr;
+
+	if (!*(split + 1) || *(split + 2))
+	{
+		printf("ERROR\n%s", INVALID_NB_ARG);
+		return (EXIT_FAILLURE);
+	}
+	printf("%s\n", *(split + 1));
+
+	if ((fd = open(*(split + 1), O_RDONLY)) < 0)
+	{
+		printf("ERROR\n%s", NO_ACCESS);
+		return (EXIT_FAILLURE);
+	}
+	close(fd);
+	return (EXIT_SUCCESS);
+}
+
+
 int	requet_put(int fd, char *requet)
 {
 	int		ret;
 	char	**split;
 
 	if (!(split = ft_strsplit(requet, ' ')))
+		return (EXIT_FAILLURE);
+	if (check_file(split))
 		return (EXIT_FAILLURE);
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 		(const void *)requet) == C_LOST)
@@ -93,9 +117,15 @@ int	requet_put(int fd, char *requet)
 			return (C_LOST);
 		return (EXIT_FAILLURE);
 	}
-	ret = get_requet(fd, split);
+	ret = get_requet(fd, split, IS_LOG);
+	if ((ret = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
+	{
+		if (ret == C_LOST)
+			return (C_LOST);
+		return (EXIT_FAILLURE);
+	}
 	ft_array_free(&split);
-	return (0);
+	return (ret);
 }
 
 
@@ -154,6 +184,7 @@ int	main(int ac, char **av)
 					break ;
 			}
 		ft_putstr(PROMPT);
+		ret = 0;
 	}
 	if (line)
 		free(line);

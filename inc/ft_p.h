@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/15 18:38:45 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 22:59:39 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@
 # define REQUET_PWD					"pwd"
 # define REQUET_GET					"get"
 # define REQUET_PUT					"put"
+# define REQUET_LS					"ls"
 
 typedef struct	s_header
 {
@@ -89,7 +90,7 @@ int	print_reponse(void *reponse);
 int	map_file(const char *file_name, char **buf);
 int	get_reponse(int fd, char *requet);
 int	recv_by_size(int fd, int output);
-int	get_requet(int fd, char **requet);
+int	get_requet(int fd, char **requet, int is_log);
 int send_data_by_size(int fd, void *data, size_t size);
 //server
 # define NO_LOG 0

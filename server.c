@@ -197,8 +197,18 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 	{
 			return (C_LOST);
 	}
-	return (get_reponse(cs->fd, requet_s));
+	if (get_reponse(cs->fd, requet_s))
+	{
+		return (send_error(cs->fd, TRANSFERT_FAIL));
+	}
+	return (send_success(cs->fd));
 	// return (EXIT_SUCCESS);
+}
+
+int	ls_requet(t_cs *cs, char **requet)
+{
+	
+	return (send_success(cs->fd));
 }
 
 
@@ -219,12 +229,15 @@ int	switch_requet(t_cs *cs, char *requet)
 		ret = quit_requet(cs);
 	else if (!ft_strncmp(requet, REQUET_CD, ft_strlen(REQUET_CD)))
 		ret =  cd_requet(cs, split);
-	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_CD)))
+	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_PWD)))
 		ret =  pwd_requet(cs, split);
-	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_CD)))
-		ret =  get_requet(cs->fd, split);
-	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_CD)))
+	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
+		ret =  ls_requet(cs, split);
+	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
+		ret =  get_requet(cs->fd, split, NO_LOG);
+	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_PUT)))
 		ret =  put_requet(cs, split, requet);
+
 	ft_array_free(&split);
 	if (ret == MAGIC_NUMER)
 	{

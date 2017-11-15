@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 05:29:24 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 05:44:28 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 20:08:26 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,6 @@ int	map_file(const char *file_name, char **dst)
 
 	if ((fd = open(file_name, O_RDONLY)) < 0)
 	{
-		ft_putstr(NO_ACCESS);
-		ft_putstr(file_name);
-		ft_putstr("\n");
 		return (-1);
 	}
 	if (fstat(fd, &buf) < 0)

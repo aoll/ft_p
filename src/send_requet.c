@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 03:01:59 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 16:09:25 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/15 23:45:36 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	send_error(int fd, char *error)
 	if (send_requet(
 		fd, R_ERROR, ft_strlen(error), error) == C_LOST)
 		return (C_LOST);
-	return (EXIT_SUCCESS);
+	return (EXIT_FAILLURE);
 }
 
 int	send_success(int fd)
