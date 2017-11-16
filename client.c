@@ -68,6 +68,56 @@ int	requet_client(int fd, char *requet, int output)
 	return (recv_by_size(fd, output));
 }
 
+int	read_result_cmd(int fd, int output)
+{
+	char	*buf;
+	int		ret;
+
+	ret = 0;
+	if (!(buf = ft_strnew(RECV_SIZE)))
+		return (EXIT_FAILLURE);
+	ft_bzero(buf, RECV_SIZE);
+	while ((ret = recv(fd, buf, RECV_SIZE, 0)) > 0)
+	{
+		// ft_putstr_fd(buf, output);
+		if (buf[ret - 1] == EOT)
+		{
+			// printf("break ret : %d, buf[ret - 1] : %d, buf: %s\n", ret, buf[ret - 1], buf);
+			// ft_putstr_fd(buf, output);
+			write(output, buf, ret - 1);
+			break;
+		}
+		// printf("ret : %d, buf[ret - 1] : %d, buf: %s\n", ret, buf[ret - 1], buf);
+		write(output, buf, ret);
+		ft_bzero(buf, RECV_SIZE);
+	}
+	// exit(0);
+	free(buf);
+	if (ret == C_LOST)
+		return (C_LOST);
+	send_success(fd);
+	// ft_putstr(SUCCESS);
+	// return (EXIT_SUCCESS);
+	// if (ret == C_LOST || send_success(fd))
+	// 	return (C_LOST);
+	return (wait_reponse(fd, R_SUCCESS, -1, IS_LOG));
+}
+
+int	requet_cmd(int fd, char *requet, int output)
+{
+	int ret;
+
+	if (send_requet(fd, R_CMD, ft_strlen(requet),
+	(const void *)requet))
+		return (C_LOST);
+	if ((ret = wait_reponse(fd, R_CMD_OK, -1, IS_LOG)))
+		return (ret);
+	if (send_requet(fd, R_WAIT_RECV, 0, NULL))
+			return (C_LOST);
+	return (read_result_cmd(fd, output));
+	// return (recv_by_size(fd, output));
+}
+
 
 int	requet_get(int fd, char *requet)
 {
@@ -143,6 +193,8 @@ int	switch_requet_client(int fd, char *requet)
 		return (requet_get(fd, requet));
 	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_GET)))
 		return (requet_put(fd, requet));
+	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
+		return (requet_cmd(fd, requet, STDOUT));
 	return (EXIT_SUCCESS);
 }
 

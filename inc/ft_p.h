@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/16 00:08:12 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/16 02:02:24 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,8 @@
 # define QUIT						2
 # define C_LOST						-1
 
+# define EOT						-42
+
 # define R_SUCCESS			200
 
 # define R_CMD				100
@@ -66,6 +68,7 @@
 # define R_RECV				203
 # define R_GET_OK			204
 # define R_PUT_OK			205
+# define R_CMD_OK			206
 # define R_ERROR			500
 # define R_QUIT				420
 

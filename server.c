@@ -9,32 +9,36 @@
 #include "ft_p.h"
 
 
+int	save_std(int fd1_dst, int fd1_src, int fd2_dst, int fd2_src)
+{
+	if (dup2(fd1_dst, fd1_src) == -1 || dup2(fd2_dst, fd2_src) == -1)
+		return (EXIT_FAILLURE);
+	return (EXIT_SUCCESS);
+}
 
 
-
-int	fork_process(void)
+int	fork_process_cmd(int fd, char **arg)
 {
 	pid_t 	pid;
 	int		ret;
 	int status;
-	char **arg;
 
-	arg = malloc(sizeof(char *)*2);
-	*arg = strdup("ls");
-	*(arg + 1) = NULL;
 	if ((pid = fork()) == -1)
-		return (1);
+		return (-1);
 	if (!pid)
 	{
+		if (save_std(fd, STDOUT, fd, STDERR))
+			return (send_error(fd, INTERN_ERROR));
 		execv("/bin/ls", arg);
-		exit(2);
+		exit(-1);
 	}
 	else
 	{
 		wait(&status);
 		ret = WEXITSTATUS(status);
+		return (ret);
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 int	free_cs(t_cs *cs)
@@ -175,10 +179,63 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 	// return (EXIT_SUCCESS);
 }
 
-int	ls_requet(t_cs *cs, char **requet)
+int	verify_multi_dest(t_cs *cs, char **requet)
 {
+	int i;
 
-	return (send_success(cs->fd));
+	i = 0;
+	if (!*requet)
+		return (EXIT_SUCCESS);
+	while (requet[i] && *requet[i] == '-')
+		i++;
+	while (requet[i])
+	{
+		if (verify_dest(cs, requet[i]))
+			return (EXIT_FAILLURE);
+		i++;
+	}
+	return (EXIT_SUCCESS);
+}
+
+int	exec_cmd(int fd, char **requet)
+{
+	int 	ret;
+	char	*end;
+
+	if (!(end = ft_strnew(1)))
+		return (send_error(fd, INTERN_ERROR));
+	ft_bzero(end, 1);
+	ret = fork_process_cmd(fd, requet);
+	end[0] = EOT;
+	ret = send(fd, end, 1, 0);
+	free(end);
+	if ((ret = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)))
+		return (ret);
+	// return (ret < 0 ? C_LOST : EXIT_SUCCESS);
+	return (ret < 0 ? send_error(fd, INTERN_ERROR) : send_success(fd));
+}
+
+
+
+int	cmd_requet(t_cs *cs, char **requet)
+{
+	int	ret;
+
+	printf("requete : %s\n", *requet);
+
+	if (verify_multi_dest(cs, requet + 1))
+		return (send_error(cs->fd, NO_ACCESS));
+	if ((ret = send_requet(
+		cs->fd, R_CMD_OK, 0, NULL)))
+		return (ret);
+	if (wait_reponse(cs->fd, R_WAIT_RECV, -1, NO_LOG) < 0)
+		return (send_error(cs->fd, INTERN_ERROR));
+
+	printf("requete : %s\n", *requet);
+	ret = exec_cmd(cs->fd, requet);
+	// if (save_std(STDOUT, STDOUT, STDERR, STDERR))
+	// 	return (EXIT_FAILLURE);
+	return (ret);
 }
 
 
@@ -211,7 +268,7 @@ int	switch_requet(t_cs *cs, char *requet)
 	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_PWD)))
 		ret =  pwd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
-		ret =  ls_requet(cs, split);
+		ret =  cmd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
 		ret =  get_requet_server(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_PUT)))
