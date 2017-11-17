@@ -6,40 +6,7 @@
 #include <string.h>
 #include <sys/wait.h>
 
-#include "ft_p.h"
-
-
-int	save_std(int fd1_dst, int fd1_src, int fd2_dst, int fd2_src)
-{
-	if (dup2(fd1_dst, fd1_src) == -1 || dup2(fd2_dst, fd2_src) == -1)
-		return (EXIT_FAILLURE);
-	return (EXIT_SUCCESS);
-}
-
-
-int	fork_process_cmd(int fd, char **arg)
-{
-	pid_t 	pid;
-	int		ret;
-	int status;
-
-	if ((pid = fork()) == -1)
-		return (-1);
-	if (!pid)
-	{
-		if (save_std(fd, STDOUT, fd, STDERR))
-			return (send_error(fd, INTERN_ERROR));
-		execv("/bin/ls", arg);
-		exit(-1);
-	}
-	else
-	{
-		wait(&status);
-		ret = WEXITSTATUS(status);
-		return (ret);
-	}
-	return (EXIT_SUCCESS);
-}
+#include "server.h"
 
 int	free_cs(t_cs *cs)
 {
@@ -75,67 +42,6 @@ int	quit_requet(t_cs *cs)
 	return (QUIT);
 }
 
-int	execute_cd(t_cs *cs, char *pwd)
-{
-	char *buf;
-
-	printf("pwd: %s\n", pwd);
-	if (chdir(pwd))
-		return (send_error(cs->fd, NO_ACCESS));
-	if (!(buf = getcwd(NULL, RECV_SIZE)))
-		return (send_error(cs->fd, INTERN_ERROR));
-	free(cs->oldpwd);
-	cs->oldpwd = cs->pwd;
-	cs->pwd = buf;
-	send_requet(
-		cs->fd, R_SUCCESS, 0, NULL);
-	return (EXIT_SUCCESS);
-}
-
-
-
-char	*new_pwd_target(t_cs *cs, char **requet)
-{
-	char	*target;
-
-	if (*requet[1] != '/')
-	{
-		if (!(target = ft_strjoin(cs->pwd, "/")))
-			return (NULL);
-		if (!(target = ft_strjoin_free(&target, requet[1])))
-			return (NULL);
-	}
-	else
-	{
-		if (!(target = ft_strjoin(cs->home, requet[1])))
-			return (NULL);
-	}
-	return (target);
-}
-
-int	cd_requet(t_cs *cs, char **requet)
-{
-	int		ret;
-	int		len;
-	char	*target;
-
-	if ((len = ft_array_len((const void **)requet)) < 2)
-		return (execute_cd(cs, cs->home));
-	else if (len > 2)
-		return (send_error(cs->fd, TOO_MUCH_ARG));
-	if (!ft_strcmp(requet[1], "-"))
-		return (execute_cd(cs, cs->oldpwd));
-	if (!(target = new_pwd_target(cs, requet)))
-		return (send_error(cs->fd, INTERN_ERROR));
-	if (verify_dest(cs, requet[1]) == EXIT_FAILLURE)
-	{
-		free(target);
-		return (send_error(cs->fd, NO_ACCESS));
-	}
-	ret = execute_cd(cs, target);
-	free(target);
-	return (ret);
-}
 
 int	pwd_requet(t_cs *cs, char **requet)
 {
@@ -176,7 +82,6 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 		return (send_error(cs->fd, TRANSFERT_FAIL));
 	}
 	return (send_success(cs->fd));
-	// return (EXIT_SUCCESS);
 }
 
 int	verify_multi_dest(t_cs *cs, char **requet)
@@ -211,7 +116,6 @@ int	exec_cmd(int fd, char **requet)
 	free(end);
 	if ((ret = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)))
 		return (ret);
-	// return (ret < 0 ? C_LOST : EXIT_SUCCESS);
 	return (ret < 0 ? send_error(fd, INTERN_ERROR) : send_success(fd));
 }
 
@@ -221,8 +125,6 @@ int	cmd_requet(t_cs *cs, char **requet)
 {
 	int	ret;
 
-	printf("requete : %s\n", *requet);
-
 	if (verify_multi_dest(cs, requet + 1))
 		return (send_error(cs->fd, NO_ACCESS));
 	if ((ret = send_requet(
@@ -230,11 +132,7 @@ int	cmd_requet(t_cs *cs, char **requet)
 		return (ret);
 	if (wait_reponse(cs->fd, R_WAIT_RECV, -1, NO_LOG) < 0)
 		return (send_error(cs->fd, INTERN_ERROR));
-
-	printf("requete : %s\n", *requet);
 	ret = exec_cmd(cs->fd, requet);
-	// if (save_std(STDOUT, STDOUT, STDERR, STDERR))
-	// 	return (EXIT_FAILLURE);
 	return (ret);
 }
 
@@ -273,7 +171,6 @@ int	switch_requet(t_cs *cs, char *requet)
 		ret =  get_requet_server(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_PUT)))
 		ret =  put_requet(cs, split, requet);
-
 	ft_array_free(&split);
 	if (ret == MAGIC_NUMER)
 	{

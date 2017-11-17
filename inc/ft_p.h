@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/16 02:02:24 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/17 13:44:24 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include "libft.h"
-# include "client.h"
 
 # define MAGIC_NUMER				42
 # define SIZE_HEADER				(sizeof(uint32_t) * 2)

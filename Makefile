@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/11/16 00:14:35 by alex             ###   ########.fr        #
+#    Updated: 2017/11/17 13:39:29 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,7 +28,7 @@ LIBFT =libft/libft.a
 
 
 
-I_DIR= -I inc/ -I inc/client -I libft/inc
+I_DIR= -I inc/ -I inc/server -I inc/client -I libft/inc
 
 ifeq ($(LANG),fr)
 	I_DIR= -I inc/ -I./libft/inc
@@ -38,11 +38,15 @@ O_DIR= obj
 
 MKDIR = mkdir
 
+CLIENT_SRC = requete.c builtin_requete.c
+SERVER_SRC = fork.c builtin_cd.c
+
 C_SRC = send_requet.c map_file.c get_reponse.c get_requet.c verfi_dest.c
 
-VPATH= .:src
+VPATH= .:src:src/client:src/server
 
-OBJS= $(C_SRC:%.c=$(O_DIR)/%.o)
+OBJS= $(C_SRC:%.c=$(O_DIR)/%.o) $(CLIENT_SRC:%.c=$(O_DIR)/%.o) \
+ 		$(SERVER_SRC:%.c=$(O_DIR)/%.o)
 
 .PHONY : all clean fclean re
 
