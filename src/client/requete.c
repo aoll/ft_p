@@ -6,11 +6,11 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/17 13:20:00 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/24 15:07:24 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_p.h"
+#include "client.h"
 
 int			requet_cmd(int fd, char *requet, int output)
 {
