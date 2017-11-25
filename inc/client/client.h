@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 05:07:02 by alex              #+#    #+#             */
-/*   Updated: 2017/11/17 13:44:17 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/24 15:08:26 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define CLIENT_H
 
 # define PROMPT	"ft_p> "
-# define IS_LOG	1
+
 
 #include "ft_p.h"
 

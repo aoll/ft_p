@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/17 13:44:24 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/24 15:49:53 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 # include <stdlib.h>
 # include "libft.h"
 
+# define IS_LOG						1
+# define NO_LOG						0
 # define MAGIC_NUMER				42
 # define SIZE_HEADER				(sizeof(uint32_t) * 2)
 
@@ -103,7 +105,5 @@ int	recv_by_size(int fd, int output);
 int	get_requet(int fd, char **requet, int is_log);
 int send_data_by_size(int fd, void *data, size_t size);
 int	verify_dest(t_cs *cs, char *dest);
-//server
-# define NO_LOG 0
 
 #endif

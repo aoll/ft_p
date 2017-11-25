@@ -257,14 +257,17 @@ int	create_server(int port)
 {
 	int					sock;
 	struct protoent		*proto;
-	struct sockaddr_in	sin;
+	struct sockaddr_in6	sin;
 
 	if (!(proto = getprotobyname(PROTOCOLE)))
 		return (-1);
-	sock = socket(PF_INET, SOCK_STREAM, proto->p_proto);
-	sin.sin_family = AF_INET;
-	sin.sin_port = htons(port);
-	sin.sin_addr.s_addr = htonl(INADDR_ANY);
+	// sock = socket(AF_UNSPEC, SOCK_STREAM, proto->p_proto);
+	sock = socket(PF_INET6, SOCK_STREAM, proto->p_proto);
+	// sin.sin_family = AF_UNSPEC;
+	sin.sin6_family = AF_INET6;
+	sin.sin6_port = htons(port);
+	sin.sin6_addr = in6addr_any;
+	// sin.sin6_addr.s_addr = htonl(INADDR_ANY);
 	bind(sock, (const struct sockaddr *)&sin, sizeof(sin));
 	listen(sock, NB_CONN_SOCKET);
 	return (sock);
