@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 18:29:29 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 18:04:22 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 22:32:29 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ static int	send_data(int fd, void *src, size_t size)
 
 int 		send_data_by_size(int fd, void *data, size_t size)
 {
-
 	if (send_requet(
 		fd, R_WAIT_SEND, size, NULL) == C_LOST)
 		return (C_LOST);

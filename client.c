@@ -72,6 +72,8 @@ int	main(int ac, char **av)
 				if (ret == C_LOST || ret == QUIT)
 					break ;
 			}
+		free(line);
+		line = NULL;
 		ft_putstr(PROMPT);
 		ret = 0;
 	}
