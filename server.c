@@ -207,27 +207,27 @@ int	read_requet(t_cs *cs, void *buf, int read)
 int	read_socket(int fd)
 {
 	t_cs	cs;
-	char	*buf;
+	char	buf[RECV_SIZE + 1];
+	// char	*buf;
 	int	read;
 	int		ret;
 
 	if (init_cs(&cs, fd))
 		return (EXIT_FAILLURE);
-	if (!(buf = ft_strnew(RECV_SIZE)))
-		return (EXIT_FAILLURE);
 	ft_bzero(buf, RECV_SIZE);
+	buf[RECV_SIZE] = '\0';
 	ret = 0;
-	while ((read = recv(fd, buf, RECV_SIZE, 0)) > 0)
+	while ((read = recv(fd, &buf, RECV_SIZE, 0)) > 0)
 	{
 		if (read >= (int)SIZE_HEADER)
 		{
-			if ((ret = read_requet(&cs, buf, read)))
+			if ((ret = read_requet(&cs, &buf, read)))
 				if (ret == QUIT || ret == C_LOST)
 					break ;
 		}
 		ft_bzero(buf, RECV_SIZE);
 	}
-	free(buf);
+	printf("%s\n", "connection close");
 	free_cs(&cs);
 	return (ret);
 }
@@ -266,6 +266,7 @@ int	create_server(int port)
 
 	if (!(proto = getprotobyname(PROTOCOLE)))
 		return (-1);
+	ft_memset(&sin, 0, sizeof(sin));
 	// sock = socket(AF_UNSPEC, SOCK_STREAM, proto->p_proto);
 	sock = socket(PF_INET6, SOCK_STREAM, proto->p_proto);
 	// sin.sin_family = AF_UNSPEC;
@@ -300,6 +301,8 @@ int	main(int ac, char **av)
 		printf("%s\n", "yo");
 	while (42)
 	{
+		ft_memset(&csin, 0, sizeof(csin));
+		ft_memset(&cslen, 0, sizeof(cslen));
 		if ((cs = accept(sock, (struct sockaddr *)&csin, &cslen)) == -1)
 		{
 			ft_putstr_fd(MESS_LIMIT_NB_CON_REACHED, STDERR);
