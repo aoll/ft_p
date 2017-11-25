@@ -42,7 +42,6 @@ int	quit_requet(t_cs *cs)
 	return (QUIT);
 }
 
-
 int	pwd_requet(t_cs *cs, char **requet)
 {
 	size_t		size;
@@ -119,8 +118,6 @@ int	exec_cmd(int fd, char **requet)
 	return (ret < 0 ? send_error(fd, INTERN_ERROR) : send_success(fd));
 }
 
-
-
 int	cmd_requet(t_cs *cs, char **requet)
 {
 	int	ret;
@@ -136,13 +133,21 @@ int	cmd_requet(t_cs *cs, char **requet)
 	return (ret);
 }
 
-
 int	get_requet_server(t_cs *cs, char **requet)
 {
+	char *path_file;
+
 	if (ft_array_len((const void **)requet) != 2)
 		return (send_error(cs->fd, INVALID_NB_ARG));
 	if (verify_dest(cs, requet[1]) == EXIT_FAILLURE)
 		return (send_error(cs->fd, NO_ACCESS));
+	if (*requet[1] == '/')
+	{
+		if (!(path_file = ft_strjoin(cs->home, requet[1])))
+			return (send_error(cs->fd, INTERN_ERROR));
+		free(requet[1]);
+		requet[1] = path_file;
+	}
 	return (get_requet(cs->fd, requet, NO_LOG));
 }
 
