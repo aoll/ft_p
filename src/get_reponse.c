@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 17:56:44 by alex              #+#    #+#             */
-/*   Updated: 2017/11/15 23:45:30 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 18:03:53 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,11 +44,7 @@ int	recv_by_size(int fd, int output)
 	int			read;
 
 	if ((size = wait_reponse(fd, R_WAIT_SEND, -1, IS_LOG)) < 0)
-	{
-		if (size == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
+		return (size == C_LOST ? C_LOST : EXIT_FAILLURE);
 	if ((send_requet(fd, R_WAIT_RECV, 0, NULL)) == C_LOST)
 		return (C_LOST);
 	if ((read = read_by_size(fd, output, size)) == C_LOST)
@@ -58,11 +54,7 @@ int	recv_by_size(int fd, int output)
 	if ((send_requet(fd, R_RECV, read, NULL)) == C_LOST)
 		return (C_LOST);
 	if ((size = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
-	{
-		if (size == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
+		return (size == C_LOST ? C_LOST : EXIT_FAILLURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -96,15 +88,9 @@ int			get_reponse(int fd, char *requet)
 	int dest_fd;
 
 	if ((ret = wait_reponse(fd, R_GET_OK, -1, IS_LOG)) < 0)
-	{
-		if (ret == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
+		return (ret == C_LOST ? C_LOST : EXIT_FAILLURE);
 	if ((dest_fd = create_file(requet)) < 0)
-	{
 		return (send_error(fd, NO_ACCESS));
-	}
 	if ((send_requet(fd, R_GET_OK, 0, NULL)) == C_LOST)
 		return (C_LOST);
 	ret = recv_by_size(fd, dest_fd);

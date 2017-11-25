@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/24 15:07:24 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 18:02:05 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,18 +67,10 @@ int			requet_put(int fd, char *requet)
 		(const void *)requet) == C_LOST)
 		return (C_LOST);
 	if ((ret = wait_reponse(fd, R_PUT_OK, -1, IS_LOG)) < 0)
-	{
-		if (ret == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
+		return (ret == C_LOST ? C_LOST : EXIT_FAILLURE);
 	ret = get_requet(fd, split, IS_LOG);
 	if ((ret = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
-	{
-		if (ret == C_LOST)
-			return (C_LOST);
-		return (EXIT_FAILLURE);
-	}
+		return (ret == C_LOST ? C_LOST : EXIT_FAILLURE);
 	ft_array_free(&split);
 	return (ret);
 }

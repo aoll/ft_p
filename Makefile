@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/11/17 13:39:29 by aollivie         ###   ########.fr        #
+#    Updated: 2017/11/25 18:20:44 by alex             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,10 +38,15 @@ O_DIR= obj
 
 MKDIR = mkdir
 
-CLIENT_SRC = requete.c builtin_requete.c
+CLIENT_SRC = requete.c builtin_requete.c create_client.c
 SERVER_SRC = fork.c builtin_cd.c
 
-C_SRC = send_requet.c map_file.c get_reponse.c get_requet.c verfi_dest.c
+C_SRC = send_requet.c \
+		map_file.c \
+		get_reponse.c \
+		get_requet.c \
+		verfi_dest.c \
+		send_reponse.c
 
 VPATH= .:src:src/client:src/server
 

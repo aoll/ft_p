@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/24 15:49:53 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 18:20:08 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,8 @@ typedef struct	s_cs
 	char		*oldpwd;
 }	t_cs;
 
+int	send_success(int fd);
+int	send_error(int fd, char *error);
 int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data);
 int	wait_reponse(int fd, unsigned int reponse, int size, int is_log);
 int	send_success(int fd);

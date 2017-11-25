@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 05:07:02 by alex              #+#    #+#             */
-/*   Updated: 2017/11/24 15:08:26 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 17:39:02 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 
 #include "ft_p.h"
 
+int			create_client(char *addr, char *port);
 int			switch_requet_client(int fd, char *requet);
 int			requet_put(int fd, char *requet);
 int			requet_get(int fd, char *requet);
