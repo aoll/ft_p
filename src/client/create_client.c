@@ -6,13 +6,13 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/25 17:35:48 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 18:46:13 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 19:11:28 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.h"
 
-static void	init_addrinfo(
+static void			init_addrinfo(
 	char * addr, struct addrinfo *hints, struct in6_addr *serveraddr)
 {
 	int rc;
@@ -38,7 +38,7 @@ static void	init_addrinfo(
 	return;
 }
 
-static void	free_res(struct addrinfo *res)
+static void				free_res(struct addrinfo *res)
 {
 	if (!res)
 		return ;
@@ -48,9 +48,9 @@ static void	free_res(struct addrinfo *res)
 
 static struct addrinfo	*get_addrinfo(char *addr, char *port)
 {
-	struct in6_addr serveraddr;
-	struct addrinfo hints;
-	int rc;
+	struct in6_addr		serveraddr;
+	struct addrinfo		hints;
+	int					rc;
 	struct addrinfo		*res;
 
 	res = NULL;
@@ -65,11 +65,25 @@ static struct addrinfo	*get_addrinfo(char *addr, char *port)
 	return (res);
 }
 
+static int	con_socket(int fd, struct addrinfo *res)
+{
+	while (res)
+	{
+		if (connect(fd, res->ai_addr, res->ai_addrlen) == EXIT_SUCCESS)
+		{
+			return (EXIT_SUCCESS);
+		}
+		res = res->ai_next;
+	}
+	return (EXIT_FAILLURE);
+}
+
 int	create_client(char *addr, char *port)
 {
 	int					sock;
 	struct protoent		*proto;
 	struct addrinfo		*res;
+	int					ret;
 
 	res = NULL;
 	if (!(proto = getprotobyname(PROTOCOLE)))
@@ -82,16 +96,10 @@ int	create_client(char *addr, char *port)
 		ft_putstr_fd("socket() failed\n", STDERR);
 		return (-1);
 	}
-	while (res)
-	{
-		if (connect(sock, res->ai_addr, res->ai_addrlen) == EXIT_SUCCESS)
-		{
-			free_res(res);
-			// free(res);
-			return (sock);
-		}
-		res = res->ai_next;
-	}
+	ret = con_socket(sock, res);
+	free_res(res);
+	if (!ret)
+		return (sock);
 	close(sock);
 	ft_putstr_fd("connect() failed\n", STDERR);
 	return (-1);
