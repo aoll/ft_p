@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/25 17:35:48 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 19:11:28 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 22:21:40 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,14 +49,18 @@ static void				free_res(struct addrinfo *res)
 static struct addrinfo	*get_addrinfo(char *addr, char *port)
 {
 	struct in6_addr		serveraddr;
-	struct addrinfo		hints;
+	struct addrinfo		*hints;
 	int					rc;
 	struct addrinfo		*res;
 
-	res = NULL;
 	rc = -1;
-	init_addrinfo(addr, &hints, &serveraddr);
-	rc = getaddrinfo(addr, port, &hints, &res);
+	res = NULL;
+	if (!(hints = malloc(sizeof(*hints))))
+		return (NULL);
+	ft_memset(hints, 0, sizeof(*hints));
+	init_addrinfo(addr, hints, &serveraddr);
+	rc = getaddrinfo(addr, port, hints, &res);
+	free(hints);
 	if (rc != 0)
 	{
 		printf("Host not found --> %s\n", addr);

@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/25 18:02:05 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/25 22:05:37 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ int			requet_get(int fd, char *requet)
 static int check_file(char **split)
 {
 	int			fd;
-	char		*ptr;
 
 	if (!*(split + 1) || *(split + 2))
 	{
