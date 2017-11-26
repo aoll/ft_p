@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/25 18:20:08 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/26 00:23:58 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,5 @@ int	get_reponse(int fd, char *requet);
 int	recv_by_size(int fd, int output);
 int	get_requet(int fd, char **requet, int is_log);
 int send_data_by_size(int fd, void *data, size_t size);
-int	verify_dest(t_cs *cs, char *dest);
 
 #endif
