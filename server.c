@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   server.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/11/29 17:39:04 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/29 17:40:30 by aollivie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
@@ -5,11 +17,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
-
 #include "server.h"
-
-
-
 
 /*
 ** usage
@@ -57,8 +65,8 @@ int	main(int ac, char **av)
 	if ((port = atoi(av[1])) <= 0)
 		usage(av[0]);
 	if ((sock = create_server(port)) < 0)
-	 	return (EXIT_FAILLURE);
-		printf("%s\n", "yo");
+		return (EXIT_FAILLURE);
+	printf("%s\n", "yo");
 	while (42)
 	{
 		ft_memset(&csin, 0, sizeof(csin));

@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 18:29:29 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 22:51:56 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:38:24 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ static int	send_data(int fd, void *src, size_t size)
 		src = (void *)src + len;
 		total += len;
 	}
-	return (EXIT_SUCCESS);
+	return (total);
 }
 
-int 		send_data_by_size(int fd, void *data, size_t size)
+int			send_data_by_size(int fd, void *data, size_t size)
 {
 	if (send_requet(
 		fd, R_WAIT_SEND, size, NULL) == C_LOST)
@@ -49,10 +49,9 @@ int 		send_data_by_size(int fd, void *data, size_t size)
 	return (send_success(fd));
 }
 
-static int	init_wait_get(fd, is_log)
+static int	init_wait_get(int fd, int is_log)
 {
-	if (send_requet(
-		fd, R_GET_OK, 0, NULL) == C_LOST)
+	if (send_requet(fd, R_GET_OK, 0, NULL) == C_LOST)
 	{
 		return (C_LOST);
 	}
@@ -67,7 +66,7 @@ int			get_requet(int fd, char **requet, int is_log)
 {
 	int			size;
 	char		*buf;
-	int 		ret;
+	int			ret;
 
 	if (ft_array_len((const void **)requet) != 2)
 		return (send_error(fd, INVALID_NB_ARG));

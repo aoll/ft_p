@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 17:56:44 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 18:03:53 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:24:13 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ static int	read_by_size(int fd, int output, size_t size)
 		}
 		write(output, buf, ret);
 		if (!ret)
-			break;
+			break ;
 		read += ret;
 	}
 	free(buf);
 	return (read);
 }
 
-int	recv_by_size(int fd, int output)
+int			recv_by_size(int fd, int output)
 {
 	int			size;
 	int			read;

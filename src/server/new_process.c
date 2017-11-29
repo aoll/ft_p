@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:26:25 by alex              #+#    #+#             */
-/*   Updated: 2017/11/26 00:38:42 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:25:51 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,15 @@ static int	switch_requet_cmp(t_cs *cs, char *requet, char **split, int ret)
 	if (!ft_strncmp(requet, REQUET_QUIT, ft_strlen(REQUET_QUIT)))
 		ret = quit_requet(cs);
 	else if (!ft_strncmp(requet, REQUET_CD, ft_strlen(REQUET_CD)))
-		ret =  cd_requet(cs, split);
+		ret = cd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PWD, ft_strlen(REQUET_PWD)))
-		ret =  pwd_requet(cs, split);
+		ret = pwd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
-		ret =  cmd_requet(cs, split);
+		ret = cmd_requet(cs, split);
 	else if (!ft_strncmp(requet, REQUET_GET, ft_strlen(REQUET_GET)))
-		ret =  get_requet_server(cs, split);
+		ret = get_requet_server(cs, split);
 	else if (!ft_strncmp(requet, REQUET_PUT, ft_strlen(REQUET_PUT)))
-		ret =  put_requet(cs, split, requet);
+		ret = put_requet(cs, split, requet);
 	return (ret);
 }
 
@@ -74,7 +74,7 @@ static int	read_socket(int fd)
 {
 	t_cs	cs;
 	char	buf[RECV_SIZE + 1];
-	int	read;
+	int		read;
 	int		ret;
 
 	if (init_cs(&cs, fd))

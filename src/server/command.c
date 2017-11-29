@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:31:05 by alex              #+#    #+#             */
-/*   Updated: 2017/11/26 00:32:01 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:25:10 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	exec_cmd(int fd, char **requet)
 {
-	int 	ret;
+	int		ret;
 	char	*end;
 
 	if (!(end = ft_strnew(1)))

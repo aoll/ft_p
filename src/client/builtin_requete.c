@@ -6,20 +6,20 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:25:41 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/24 15:07:41 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:17:47 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.h"
 
-int quit_requet_client(int fd, char *requet)
+int	quit_requet_client(int fd, char *requet)
 {
 	send_requet(fd, R_CMD, ft_strlen(requet), (const void *)requet);
 	ft_putstr(SUCCESS);
 	return (QUIT);
 }
 
-int cd_requet_client(int fd, char *requet)
+int	cd_requet_client(int fd, char *requet)
 {
 	char		*buf;
 	int			ret;
@@ -58,7 +58,7 @@ int	read_result_cmd(int fd, int output)
 		if (buf[ret - 1] == EOT)
 		{
 			write(output, buf, ret - 1);
-			break;
+			break ;
 		}
 		write(output, buf, ret);
 		ft_bzero(buf, RECV_SIZE);

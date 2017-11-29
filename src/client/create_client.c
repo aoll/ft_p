@@ -6,14 +6,14 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/25 17:35:48 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 22:21:40 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:22:32 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "client.h"
 
-static void			init_addrinfo(
-	char * addr, struct addrinfo *hints, struct in6_addr *serveraddr)
+static void				init_addrinfo(
+	char *addr, struct addrinfo *hints, struct in6_addr *serveraddr)
 {
 	int rc;
 
@@ -35,7 +35,7 @@ static void			init_addrinfo(
 			hints->ai_flags |= AI_NUMERICHOST;
 		}
 	}
-	return;
+	return ;
 }
 
 static void				free_res(struct addrinfo *res)
@@ -69,7 +69,7 @@ static struct addrinfo	*get_addrinfo(char *addr, char *port)
 	return (res);
 }
 
-static int	con_socket(int fd, struct addrinfo *res)
+static int				con_socket(int fd, struct addrinfo *res)
 {
 	while (res)
 	{
@@ -82,7 +82,7 @@ static int	con_socket(int fd, struct addrinfo *res)
 	return (EXIT_FAILLURE);
 }
 
-int	create_client(char *addr, char *port)
+int						create_client(char *addr, char *port)
 {
 	int					sock;
 	struct protoent		*proto;

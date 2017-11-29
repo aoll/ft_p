@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:32:56 by alex              #+#    #+#             */
-/*   Updated: 2017/11/26 01:00:37 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:26:20 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,14 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 {
 	int			size;
 	char		*buf;
-	int 		ret;
+	int			ret;
 
 	if (ft_array_len((const void **)requet) != 2)
 		return (send_error(cs->fd, INVALID_NB_ARG));
 	if (send_requet(
 		cs->fd, R_PUT_OK, 0, NULL) == C_LOST)
 	{
-			return (C_LOST);
+		return (C_LOST);
 	}
 	if (get_reponse(cs->fd, requet_s))
 	{

@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/14 03:01:59 by alex              #+#    #+#             */
-/*   Updated: 2017/11/25 18:19:39 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:28:46 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ int			wait_reponse(
 	char		*buf;
 	t_header	*header;
 	int			ret;
+
 	if ((ret = recv_reponse(fd, &buf)))
 		return (ret);
 	header = (t_header *)buf;

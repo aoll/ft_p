@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/25 22:52:43 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:19:36 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int			requet_cmd(int fd, char *requet, int output)
 	if ((ret = wait_reponse(fd, R_CMD_OK, -1, IS_LOG)))
 		return (ret);
 	if (send_requet(fd, R_WAIT_RECV, 0, NULL))
-			return (C_LOST);
+		return (C_LOST);
 	return (read_result_cmd(fd, output));
 }
 
@@ -34,7 +34,7 @@ int			requet_get(int fd, char *requet)
 	return (get_reponse(fd, requet));
 }
 
-static int check_file(char **split)
+static int	check_file(char **split)
 {
 	int			fd;
 
@@ -51,7 +51,6 @@ static int check_file(char **split)
 	close(fd);
 	return (EXIT_SUCCESS);
 }
-
 
 int			requet_put(int fd, char *requet)
 {

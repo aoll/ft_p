@@ -6,21 +6,21 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/26 00:23:58 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:45:52 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_P_H
 # define FT_P_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <strings.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <sys/socket.h>
+# include <netdb.h>
+# include <unistd.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+# include <strings.h>
 # include <sys/mman.h>
 # include <fcntl.h>
 # include <sys/stat.h>
@@ -84,7 +84,7 @@ typedef struct	s_header
 {
 	uint32_t	requet;
 	uint32_t	size;
-}	t_header;
+}				t_header;
 
 typedef struct	s_cs
 {
@@ -92,19 +92,31 @@ typedef struct	s_cs
 	char		*home;
 	char		*pwd;
 	char		*oldpwd;
-}	t_cs;
+}				t_cs;
 
-int	send_success(int fd);
-int	send_error(int fd, char *error);
-int	send_requet(int fd, uint32_t requet, uint32_t size, const void *data);
-int	wait_reponse(int fd, unsigned int reponse, int size, int is_log);
-int	send_success(int fd);
-int	send_error(int fd, char *error);
-int	print_reponse(void *reponse);
-int	map_file(const char *file_name, char **buf);
-int	get_reponse(int fd, char *requet);
-int	recv_by_size(int fd, int output);
-int	get_requet(int fd, char **requet, int is_log);
-int send_data_by_size(int fd, void *data, size_t size);
+int				send_success(
+	int fd);
+int				send_error(
+	int fd, char *error);
+int				send_requet(
+	int fd, uint32_t requet, uint32_t size, const void *data);
+int				wait_reponse(
+	int fd, unsigned int reponse, int size, int is_log);
+int				send_success(
+	int fd);
+int				send_error(
+	int fd, char *error);
+int				print_reponse(
+	void *reponse);
+int				map_file(
+	const char *file_name, char **buf);
+int				get_reponse(
+	int fd, char *requet);
+int				recv_by_size(
+	int fd, int output);
+int				get_requet(
+	int fd, char **requet, int is_log);
+int				send_data_by_size(
+	int fd, void *data, size_t size);
 
 #endif

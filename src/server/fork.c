@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:31:40 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/24 16:31:03 by alex             ###   ########.fr       */
+/*   Updated: 2017/11/29 17:27:12 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,11 @@ static int	dup_std(int fd1_dst, int fd1_src, int fd2_dst, int fd2_src)
 	return (EXIT_SUCCESS);
 }
 
-
 int			fork_process_cmd(int fd, char **arg)
 {
-	pid_t 	pid;
+	pid_t	pid;
 	int		ret;
-	int status;
+	int		status;
 
 	if ((pid = fork()) == -1)
 		return (-1);

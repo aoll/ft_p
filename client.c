@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/11/29 17:40:58 by aollivie          #+#    #+#             */
+/*   Updated: 2017/11/29 17:42:08 by aollivie         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "client.h"
 
@@ -14,7 +25,7 @@ void	usage(char *s)
 	exit(EXIT_FAILLURE);
 }
 
-int	create_client_ipv4(char *addr, int port)
+int		create_client_ipv4(char *addr, int port)
 {
 	int					sock;
 	struct protoent		*proto;
@@ -35,28 +46,24 @@ int	create_client_ipv4(char *addr, int port)
 	return (sock);
 }
 
-
 /*
 ** TCP/IP (v4) client example from 42 school
 */
 
-int	main(int ac, char **av)
+int		main(int ac, char **av)
 {
 	int					port;
 	int					sock;
+	char				*line;
+	char				*line_trim;
+	int					ret;
 
-	// return (get_addr(av));
 	if (ac != 3)
 		usage(av[0]);
 	if ((port = atoi(av[2])) <= 0)
 		usage(av[0]);
 	if ((sock = create_client(av[1], av[2])) < 0)
-	 	return (EXIT_FAILLURE);
-
-	char 	*line;
-	char 	*line_trim;
-	int		ret;
-
+		return (EXIT_FAILLURE);
 	ret = QUIT;
 	line = NULL;
 	line_trim = NULL;
