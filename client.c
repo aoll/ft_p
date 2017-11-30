@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/29 17:40:58 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 17:42:08 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/11/30 23:50:25 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,43 +19,54 @@
 ** usage
 */
 
-void	usage(char *s)
+static void	usage(char *s)
 {
-	printf("Usage: %s <port>\n", s);
+	printf("Usage: %s <addresse> <port>\n", s);
 	exit(EXIT_FAILLURE);
 }
 
-int		create_client_ipv4(char *addr, int port)
+static void	main_loop_init(int *ret, char **line, char **line_trim)
 {
-	int					sock;
-	struct protoent		*proto;
-	struct sockaddr_in	sin;
+	*ret = QUIT;
+	*line = NULL;
+	*line_trim = NULL;
+}
 
-	if (!(proto = getprotobyname(PROTOCOLE)))
-		return (-1);
-	sock = socket(PF_INET, SOCK_STREAM, proto->p_proto);
-	inet_pton(AF_INET, addr, &sin);
-	sin.sin_port = htons(port);
-	sin.sin_addr.s_addr = inet_addr(addr);
-	sin.sin_family = AF_INET;
-	if (connect(sock, (const struct sockaddr *)&sin, sizeof(sin)) == -1)
+static int	main_loop(int sock)
+{
+	char				*line;
+	char				*line_trim;
+	int					ret;
+
+	main_loop_init(&ret, &line, &line_trim);
+	ft_putstr(PROMPT);
+	while (get_next_line(STDIN, &line) > 0)
 	{
-		printf("%s\n", "Connect error");
-		exit(EXIT_FAILLURE);
+		if (line)
+			if ((line_trim = ft_strtrim(line)))
+			{
+				ret = switch_requet_client(sock, line_trim);
+				ft_str_free(line_trim);
+				if (ret == C_LOST || ret == QUIT)
+					break ;
+			}
+		ft_str_free(line);
+		ft_putstr(PROMPT);
+		ret = 0;
 	}
-	return (sock);
+	ft_str_free(line);
+	ft_str_free(line_trim);
+	return (ret);
 }
 
 /*
 ** TCP/IP (v4) client example from 42 school
 */
 
-int		main(int ac, char **av)
+int			main(int ac, char **av)
 {
 	int					port;
 	int					sock;
-	char				*line;
-	char				*line_trim;
 	int					ret;
 
 	if (ac != 3)
@@ -64,42 +75,12 @@ int		main(int ac, char **av)
 		usage(av[0]);
 	if ((sock = create_client(av[1], av[2])) < 0)
 		return (EXIT_FAILLURE);
-	ret = QUIT;
-	line = NULL;
-	line_trim = NULL;
-	ft_putstr(PROMPT);
-	while (get_next_line(STDIN, &line) > 0)
-	{
-		if (line)
-			if ((line_trim = ft_strtrim(line)))
-			{
-				ret = switch_requet_client(sock, line_trim);
-				free(line_trim);
-				line_trim = NULL;
-				if (ret == C_LOST || ret == QUIT)
-					break ;
-			}
-		free(line);
-		line = NULL;
-		ft_putstr(PROMPT);
-		ret = 0;
-	}
-	if (line)
-		free(line);
-	if (line_trim)
-		free(line_trim);
+	ret = main_loop(sock);
 	close(sock);
-	if (ret == C_LOST)
-	{
-		ft_putstr_fd(ERROR, STDERR);
-		ft_putstr_fd(CONNECTION_LOST, STDERR);
-		return (EXIT_FAILLURE);
-	}
 	if (ret != QUIT)
 	{
 		ft_putstr_fd(ERROR, STDERR);
-		ft_putstr_fd(INTERN_ERROR, STDERR);
-		return (EXIT_FAILLURE);
+		ft_putstr_fd(ret == C_LOST ? CONNECTION_LOST : INTERN_ERROR, STDERR);
 	}
-	return (EXIT_SUCCESS);
+	return (ret == QUIT ? EXIT_SUCCESS : EXIT_FAILLURE);
 }

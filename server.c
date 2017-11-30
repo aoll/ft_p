@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/29 17:39:04 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 17:40:30 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 00:08:10 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@
 ** usage
 */
 
-void	usage(char *s)
+static void	usage(char *s)
 {
-	printf("Usage: %s <port>\n", s);
+	dup2(STDERR, STDOUT);
+	printf("Usage: %s <port> <option dir>\n", s);
 	exit(EXIT_FAILLURE);
 }
 
-int	create_server(int port)
+static int	create_server(int port)
 {
 	int					sock;
 	struct protoent		*proto;
@@ -47,26 +48,12 @@ int	create_server(int port)
 	return (sock);
 }
 
-/*
-** TCP/IP (v4) server example from 42 school
-*/
-
-int	main(int ac, char **av)
+static int	main_loop(int sock)
 {
-	int					port;
-	int					sock;
 	int					cs;
 	unsigned int		cslen;
 	struct sockaddr_in	csin;
-	int					nb_con;
 
-	if (ac != 2)
-		usage(av[0]);
-	if ((port = atoi(av[1])) <= 0)
-		usage(av[0]);
-	if ((sock = create_server(port)) < 0)
-		return (EXIT_FAILLURE);
-	printf("%s\n", "yo");
 	while (42)
 	{
 		ft_memset(&csin, 0, sizeof(csin));
@@ -78,7 +65,37 @@ int	main(int ac, char **av)
 		}
 		new_process(cs);
 	}
-	close(cs);
+}
+
+static void	set_start_dir(const char *path)
+{
+	if (chdir(path))
+	{
+		dup2(STDERR, STDOUT);
+		printf("Error: no access to %s\n", path);
+		exit(EXIT_FAILLURE);
+	}
+}
+
+/*
+** TCP/IP (v4) server example from 42 school
+*/
+
+int			main(int ac, char **av)
+{
+	int					port;
+	int					sock;
+
+	if (ac < 2 || ac > 3)
+		usage(av[0]);
+	if ((port = atoi(av[1])) <= 0)
+		usage(av[0]);
+	if (ac == 3)
+		set_start_dir(av[2]);
+	if ((sock = create_server(port)) < 0)
+		return (EXIT_FAILLURE);
+	printf("%s\n", "yo");
+	main_loop(sock);
 	close(sock);
 	return (EXIT_SUCCESS);
 }
