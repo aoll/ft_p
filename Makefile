@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/12/01 11:13:00 by aollivie         ###   ########.fr        #
+#    Updated: 2017/12/01 12:32:37 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,7 +52,8 @@ C_SRC = send_requet.c \
 		map_file.c \
 		get_reponse.c \
 		get_requet.c \
-		send_reponse.c
+		send_reponse.c \
+		switch_requet_set_space.c
 
 VPATH= .:src:src/client:src/server
 

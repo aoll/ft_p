@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 11:07:09 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 11:18:05 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 12:44:34 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,29 +29,13 @@ static int	switch_requet_cmp(t_cs *cs, char *requet, char **split, int ret)
 	return (ret);
 }
 
-static int	switch_requet_set_space(t_cs *cs, char *requet)
-{
-	int 	i;
-
-	i = 0;
-	while (requet[i] && i < RECV_SIZE)
-	{
-		if (requet[i] == '\t' || requet[i] == '\n')
-		{
-			requet[i] = ' ';
-		}
-		i++;
-	}
-	return (EXIT_SUCCESS);
-}
-
 static int	switch_requet(t_cs *cs, char *requet)
 {
 	int			ret;
 	char		**split;
 
 	ret = MAGIC_NUMER;
-	switch_requet_set_space(cs, requet);
+	switch_requet_set_space(requet);
 	if (!(split = ft_strsplit(requet, ' ')))
 	{
 		if ((ret = send_requet(

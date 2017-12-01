@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 11:15:53 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 12:43:04 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ typedef struct	s_cs
 	char		*oldpwd;
 }				t_cs;
 
+int				switch_requet_set_space(char *requet);
 int				send_success(
 	int fd);
 int				send_error(

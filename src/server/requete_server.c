@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:32:56 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 11:04:55 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 13:00:39 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,10 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 	char		*buf;
 	int			ret;
 
-	if (ft_array_len((const void **)requet) != 2)
+	if ((ret = ft_array_len((const void **)requet)) != 2)
+	{
 		return (send_error(cs->fd, INVALID_NB_ARG));
+	}
 	if (send_requet(
 		cs->fd, R_PUT_OK, 0, NULL) == C_LOST)
 	{
@@ -64,22 +66,16 @@ int	get_requet_server(t_cs *cs, char **requet)
 {
 	char *path_file;
 
-	// printf("%s\n", "get_requet_server 1");
 	if (ft_array_len((const void **)requet) != 2)
 		return (send_error(cs->fd, INVALID_NB_ARG));
-	// printf("%s\n", "get_requet_server 2");
 	if (verify_dest(cs, requet[1]) == EXIT_FAILLURE)
 		return (send_error(cs->fd, NO_ACCESS));
-	// printf("%s\n", "get_requet_server 3");
 	if (*requet[1] == '/')
 	{
-		// printf("%s\n", "get_requet_server 4");
 		if (!(path_file = ft_strjoin(cs->home, requet[1])))
 			return (send_error(cs->fd, INTERN_ERROR));
-		// printf("%s\n", "get_requet_server 5");
 		free(requet[1]);
 		requet[1] = path_file;
 	}
-	// printf("%s\n", "get_requet_server 6");
 	return (get_requet(cs->fd, requet, NO_LOG));
 }

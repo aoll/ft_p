@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 10:50:54 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 12:57:25 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ int			requet_cmd(int fd, char *requet, int output)
 
 int			requet_get(int fd, char *requet)
 {
-	// printf("%s\n", "requet_get");
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 		(const void *)requet) == C_LOST)
 		return (C_LOST);
@@ -76,6 +75,7 @@ int			requet_put(int fd, char *requet)
 
 int			switch_requet_client(int fd, char *requet)
 {
+	switch_requet_set_space(requet);
 	if (!ft_strncmp(requet, REQUET_QUIT, ft_strlen(REQUET_QUIT)))
 		return (quit_requet_client(fd, requet));
 	else if (!ft_strncmp(requet, REQUET_CD, ft_strlen(REQUET_CD)))
@@ -88,5 +88,6 @@ int			switch_requet_client(int fd, char *requet)
 		return (requet_put(fd, requet));
 	else if (!ft_strncmp(requet, REQUET_LS, ft_strlen(REQUET_LS)))
 		return (requet_cmd(fd, requet, STDOUT));
+	printf("ERROR\n%s", UNKNOW_CMD);
 	return (EXIT_SUCCESS);
 }
