@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:32:56 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 13:00:39 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 13:23:05 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ int	quit_requet(t_cs *cs)
 int	pwd_requet(t_cs *cs, char **requet)
 {
 	size_t		size;
-	char		*data;
 	int			ref;
 
 	if (ft_array_len((const void **)requet) > 1)
@@ -42,8 +41,6 @@ int	pwd_requet(t_cs *cs, char **requet)
 
 int	put_requet(t_cs *cs, char **requet, char *requet_s)
 {
-	int			size;
-	char		*buf;
 	int			ret;
 
 	if ((ret = ft_array_len((const void **)requet)) != 2)

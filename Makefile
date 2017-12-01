@@ -6,12 +6,12 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/12/01 12:32:37 by aollivie         ###   ########.fr        #
+#    Updated: 2017/12/01 13:22:06 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
-DEBUG=yes
+DEBUG=no
 CC=clang
 
 ifeq ($(DEBUG), yes)
@@ -88,10 +88,10 @@ $(O_DIR):
 				$(MKDIR) $(O_DIR)
 clean :
 		rm -rf $(O_DIR)
-		# make clean -C libft
+		make clean -C libft
 
 fclean : clean
-		@rm -rf $(NAME_SERVER) $(NAME_CLIENT)
-		# make fclean -C libft
+		rm -rf $(NAME_SERVER) $(NAME_CLIENT)
+		make fclean -C libft
 
 re : fclean all
