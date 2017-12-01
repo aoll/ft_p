@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 05:29:24 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 09:02:22 by alex             ###   ########.fr       */
+/*   Updated: 2017/12/01 10:50:22 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	map_file(const char *file_name, char **dst)
 	char		*ptr;
 	struct stat	buf;
 
-	printf("file_name: %s\n", file_name);
+	// printf("file_name: %s\n", file_name);
 	if ((fd = open(file_name, O_RDONLY)) < 0)
 	{
 		return (-1);

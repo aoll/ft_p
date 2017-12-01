@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/11/26 00:40:03 by alex             ###   ########.fr        #
+#    Updated: 2017/12/01 11:13:00 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,8 @@ SERVER_SRC = fork.c \
 			new_process.c \
 			cs.c \
 			requete_server.c \
-			command.c
+			command.c \
+			read_requete.c
 
 C_SRC = send_requet.c \
 		map_file.c \

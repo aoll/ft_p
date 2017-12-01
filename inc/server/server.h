@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:34:01 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 17:44:16 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 11:06:23 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ int			quit_requet(t_cs *cs);
 int			pwd_requet(t_cs *cs, char **requet);
 int			put_requet(t_cs *cs, char **requet, char *requet_s);
 int			get_requet_server(t_cs *cs, char **requet);
+int			read_socket(int fd);
 
 #endif

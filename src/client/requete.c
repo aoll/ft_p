@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 08:32:07 by alex             ###   ########.fr       */
+/*   Updated: 2017/12/01 10:50:54 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int			requet_cmd(int fd, char *requet, int output)
 
 int			requet_get(int fd, char *requet)
 {
-	printf("%s\n", "requet_get");
+	// printf("%s\n", "requet_get");
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 		(const void *)requet) == C_LOST)
 		return (C_LOST);
