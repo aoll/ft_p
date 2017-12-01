@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:17:42 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 12:57:25 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:34:38 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int			requet_get(int fd, char *requet)
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 		(const void *)requet) == C_LOST)
 		return (C_LOST);
-	return (get_reponse(fd, requet));
+	return (get_reponse(fd, requet, IS_LOG));
 }
 
 static int	check_file(char **split)

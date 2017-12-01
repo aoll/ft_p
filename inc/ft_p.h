@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/07 16:42:38 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 12:43:04 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:52:58 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,9 +112,9 @@ int				print_reponse(
 int				map_file(
 	const char *file_name, char **buf);
 int				get_reponse(
-	int fd, char *requet);
+	int fd, char *requet, int is_log);
 int				recv_by_size(
-	int fd, int output);
+	int fd, int output, int is_log);
 int				get_requet(
 	int fd, char **requet, int is_log);
 int				send_data_by_size(

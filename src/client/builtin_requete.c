@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:25:41 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 17:17:47 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:42:45 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	requet_client(int fd, char *requet, int output)
 	if (send_requet(fd, R_CMD, ft_strlen(requet),
 	(const void *)requet))
 		return (C_LOST);
-	return (recv_by_size(fd, output));
+	return (recv_by_size(fd, output, IS_LOG));
 }
 
 int	read_result_cmd(int fd, int output)

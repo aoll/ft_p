@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:31:40 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/29 17:27:12 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:58:31 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int			fork_process_cmd(int fd, char **arg)
 	}
 	else
 	{
-		wait(&status);
+		wait4(pid, &status, 0, NULL);
 		ret = WEXITSTATUS(status);
 		return (ret);
 	}

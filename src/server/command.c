@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:31:05 by alex              #+#    #+#             */
-/*   Updated: 2017/11/29 17:25:10 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:26:42 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ static int	exec_cmd(int fd, char **requet)
 	end[0] = EOT;
 	ret = send(fd, end, 1, 0);
 	free(end);
-	if ((ret = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)))
+	if ((ret = wait_reponse(fd, R_SUCCESS, -1, NO_LOG)))
 		return (ret);
 	return (ret < 0 ? send_error(fd, INTERN_ERROR) : send_success(fd));
 }

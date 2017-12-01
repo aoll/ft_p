@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:32:56 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 13:23:05 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:52:55 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	put_requet(t_cs *cs, char **requet, char *requet_s)
 	{
 		return (C_LOST);
 	}
-	if (get_reponse(cs->fd, requet_s))
+	if (get_reponse(cs->fd, requet_s, NO_LOG))
 	{
 		return (send_error(cs->fd, TRANSFERT_FAIL));
 	}

@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/15 17:56:44 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 12:59:20 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 17:33:59 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ static int	read_by_size(int fd, int output, size_t size)
 	return (read);
 }
 
-int			recv_by_size(int fd, int output)
+int			recv_by_size(int fd, int output, int is_log)
 {
 	int			size;
 	int			read;
 
-	if ((size = wait_reponse(fd, R_WAIT_SEND, -1, IS_LOG)) < 0)
+	if ((size = wait_reponse(fd, R_WAIT_SEND, -1, is_log)) < 0)
 		return (size == C_LOST ? C_LOST : EXIT_FAILLURE);
 	if ((send_requet(fd, R_WAIT_RECV, 0, NULL)) == C_LOST)
 		return (C_LOST);
@@ -53,7 +53,7 @@ int			recv_by_size(int fd, int output)
 		write(STDOUT, "\n", 1);
 	if ((send_requet(fd, R_RECV, read, NULL)) == C_LOST)
 		return (C_LOST);
-	if ((size = wait_reponse(fd, R_SUCCESS, -1, IS_LOG)) < 0)
+	if ((size = wait_reponse(fd, R_SUCCESS, -1, is_log)) < 0)
 		return (size == C_LOST ? C_LOST : EXIT_FAILLURE);
 	return (EXIT_SUCCESS);
 }
@@ -82,7 +82,7 @@ static int	create_file(char *requet)
 	return (fd < 0 ? -1 : fd);
 }
 
-int			get_reponse(int fd, char *requet)
+int			get_reponse(int fd, char *requet, int is_log)
 {
 	int	ret;
 	int dest_fd;
@@ -93,7 +93,7 @@ int			get_reponse(int fd, char *requet)
 		return (send_error(fd, NO_ACCESS));
 	if ((send_requet(fd, R_GET_OK, 0, NULL)) == C_LOST)
 		return (C_LOST);
-	ret = recv_by_size(fd, dest_fd);
+	ret = recv_by_size(fd, dest_fd, is_log);
 	close(dest_fd);
 	return (ret);
 }

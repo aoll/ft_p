@@ -6,7 +6,7 @@
 #    By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/14 17:07:06 by aollivie          #+#    #+#              #
-#    Updated: 2017/12/01 13:22:06 by aollivie         ###   ########.fr        #
+#    Updated: 2017/12/01 17:06:27 by aollivie         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ else
 		CFLAGS=  -Wall -Wextra -Werror
 endif
 
-NAME_SERVER = server
+NAME_SERVER = serveur
 
 NAME_CLIENT = client
 
@@ -74,10 +74,10 @@ else
 endif
 
 $(NAME_SERVER):$(OBJS)
-				$(CC) $(CFLAGS) $(I_DIR) $^ server.c  $(LIBFT) -o $@
+				$(CC) $(CFLAGS) $(I_DIR) $^ src/server/server.c  $(LIBFT) -o $@
 
 $(NAME_CLIENT):$(OBJS)
-		$(CC) $(CFLAGS) $(I_DIR) $^ client.c $(LIBFT) -o $@
+		$(CC) $(CFLAGS) $(I_DIR) $^ src/client/client.c $(LIBFT) -o $@
 
 $(O_DIR)/%.o: %.c
 				$(CC) $(CFLAGS) $(I_DIR) -c $< -o $@
