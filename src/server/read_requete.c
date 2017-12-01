@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 11:07:09 by aollivie          #+#    #+#             */
-/*   Updated: 2017/12/01 12:44:34 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/01 15:15:19 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ int			read_socket(int fd)
 		}
 		ft_bzero(buf, RECV_SIZE);
 	}
-	printf("%s\n", "connection close");
 	free_cs(&cs);
 	return (ret);
 }

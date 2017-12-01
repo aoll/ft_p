@@ -6,7 +6,7 @@
 /*   By: aollivie <aollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/17 13:38:02 by aollivie          #+#    #+#             */
-/*   Updated: 2017/11/26 00:25:06 by alex             ###   ########.fr       */
+/*   Updated: 2017/12/01 15:13:02 by aollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ static int	execute_cd(t_cs *cs, char *pwd)
 {
 	char *buf;
 
-	printf("pwd: %s\n", pwd);
 	if (chdir(pwd))
 		return (send_error(cs->fd, NO_ACCESS));
 	if (!(buf = getcwd(NULL, RECV_SIZE)))
