@@ -6,7 +6,7 @@
 /*   By: alex <alex@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/26 00:26:25 by alex              #+#    #+#             */
-/*   Updated: 2017/12/01 17:58:48 by aollivie         ###   ########.fr       */
+/*   Updated: 2017/12/03 16:51:49 by alex             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,11 @@ int			new_process(int fd)
 	if (!pid)
 	{
 		ret = read_socket(fd);
-		wait4(-1, &status, 0, NULL);
 		close(fd);
-		printf("%s\n", "end deco");
+	}
+	else
+	{
+		wait4(pid, &status, WNOHANG, NULL);
 	}
 	return (EXIT_SUCCESS);
 }
